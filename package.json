@@ -1,0 +1,27 @@
+{
+	"name": "backend",
+	"version": "1.0.0",
+	"main": "index.js",
+	"repository": "git@github.com:ntu-cloud-native-group-24/backend.git",
+	"author": "group 24",
+	"license": "MIT",
+	"dependencies": {
+		"@fastify/swagger": "^8.12.0",
+		"@fastify/swagger-ui": "^1.10.1",
+		"fastify": "^4.24.3",
+		"typescript": "^5.2.2"
+	},
+	"devDependencies": {
+		"@types/node": "^20.8.10",
+		"prettier": "^3.0.3",
+		"ts-node-dev": "^2.0.0"
+	},
+	"engines": {
+		"node": ">=20.0.0"
+	},
+	"scripts": {
+		"build": "tsc",
+		"dev": "ts-node-dev --respawn src/app.ts",
+		"format": "prettier src -w"
+	}
+}

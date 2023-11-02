@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"module": "CommonJS",
+		"target": "ES2022",
+		"moduleResolution": "node",
+		"types": ["node"],
+		"outDir": "dist",
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	},
+	"include": ["src/**/*"]
+}
