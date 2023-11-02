@@ -5,10 +5,7 @@
 		"target": "ES2022",
 		"moduleResolution": "node",
 		"types": ["node"],
-		"outDir": "dist",
-		"paths": {
-			"@/*": ["./src/*"]
-		}
+		"outDir": "dist"
 	},
 	"include": ["src/**/*"]
 }
