@@ -1,7 +1,8 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
+import { StoreTypeRef, StoreType } from '../schema'
 
 export default async function init(app: FastifyInstance) {
-	app.get(
+	app.get<{ Reply: StoreType[] }>(
 		'/stores',
 		{
 			schema: {
@@ -11,16 +12,17 @@ export default async function init(app: FastifyInstance) {
 				response: {
 					200: {
 						description: 'Successful response',
-						type: 'object',
-						properties: {
-							success: { type: 'boolean' },
-							stores: {
-								type: 'array',
-								items: {
-									$ref: 'Store'
-								}
-							}
-						}
+						type: 'array',
+						items: StoreTypeRef
+						// properties: {
+						// 	success: { type: 'boolean' },
+						// 	stores: {
+						// 		type: 'array',
+						// 		items: {
+						// 			$ref: 'Store'
+						// 		}
+						// 	}
+						// }
 					}
 				}
 			}

@@ -1,18 +1,11 @@
 import { FastifyInstance } from 'fastify'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
+import { RegisterUserDef, StoreDef } from './schema'
 
 export async function initSwagger(app: FastifyInstance) {
-	app.addSchema({
-		$id: 'Store',
-		type: 'object',
-		required: ['id'],
-		properties: {
-			id: { type: 'string', format: 'uuid' },
-			displayName: { type: 'string' },
-			storePicture: { type: 'string' }
-		}
-	})
+	app.addSchema(StoreDef)
+	app.addSchema(RegisterUserDef)
 	await app.register(fastifySwagger, {
 		swagger: {
 			info: {
