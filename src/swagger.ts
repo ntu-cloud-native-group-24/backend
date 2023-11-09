@@ -1,11 +1,12 @@
 import { FastifyInstance } from 'fastify'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
-import { RegisterUserDef, StoreDef } from './schema'
+import { LoginUserDef, RegisterUserDef, StoreDef } from './schema'
 
 export async function initSwagger(app: FastifyInstance) {
-	app.addSchema(StoreDef)
+	app.addSchema(LoginUserDef)
 	app.addSchema(RegisterUserDef)
+	app.addSchema(StoreDef)
 	await app.register(fastifySwagger, {
 		swagger: {
 			info: {
