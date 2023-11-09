@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { RegisterUserRef, RegisterUserType, LoginUserRef, LoginUserType } from '../schema'
-import { createUser, findUserLogin, validateUser } from '../models/user'
+import * as User from '../models/user'
 
 export default async function init(app: FastifyInstance) {
 	app.post<{ Body: RegisterUserType }>(
@@ -39,12 +39,12 @@ export default async function init(app: FastifyInstance) {
 				reply.code(400).send({ message: 'Password must be at least 12 characters' })
 				return
 			}
-			const found = !!(await findUserLogin(username))
+			const found = !!(await User.findUserLogin(username))
 			if (found) {
 				reply.code(400).send({ message: 'User already exists' })
 				return
 			}
-			const success = await createUser({
+			const success = await User.createUser({
 				name,
 				username,
 				password,
@@ -86,7 +86,7 @@ export default async function init(app: FastifyInstance) {
 		},
 		async (req, reply) => {
 			const { username, password } = req.body
-			const valid = await validateUser(username, password)
+			const valid = await User.validateUser(username, password)
 			if (!valid) {
 				reply.code(400).send({ message: 'Invalid user or password' })
 				return

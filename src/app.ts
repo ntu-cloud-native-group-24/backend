@@ -4,9 +4,9 @@ import { AddressInfo } from 'net'
 import { initRoutes } from './routes'
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 
-async function createFastify() {
+export async function createFastify(logger: boolean) {
 	const app = fastify({
-		logger: true
+		logger
 	}).withTypeProvider<TypeBoxTypeProvider>()
 	await initSwagger(app)
 	await initRoutes(app)
@@ -16,7 +16,7 @@ async function createFastify() {
 export type FastifyInstanceType = Awaited<ReturnType<typeof createFastify>>
 
 if (require.main === module) {
-	createFastify().then(app => {
+	createFastify(true).then(app => {
 		app.listen(
 			{
 				port: 3000
