@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { RegisterUserRef, RegisterUserType, LoginUserRef, LoginUserType } from '../schema'
-import { db } from '../db'
-import { hash, verify } from '../utils/password'
+import { createUser, findUserLogin, validateUser } from '../models/user'
 
 export default async function init(app: FastifyInstance) {
 	app.post<{ Body: RegisterUserType }>(
@@ -32,32 +31,26 @@ export default async function init(app: FastifyInstance) {
 		},
 		async (req, reply) => {
 			const { name, username, password } = req.body
-			const found = !!(await db.selectFrom('user_data').where('username', '=', username).executeTakeFirst())
+			if (username.length < 8) {
+				reply.code(400).send({ message: 'Username must be at least 8 characters' })
+				return
+			}
+			if (password.length < 12) {
+				reply.code(400).send({ message: 'Password must be at least 12 characters' })
+				return
+			}
+			const found = !!(await findUserLogin(username))
 			if (found) {
 				reply.code(400).send({ message: 'User already exists' })
 				return
 			}
-			const hashedPassword = await hash(password)
-			const user = await db.transaction().execute(async tx => {
-				const user = await tx
-					.insertInto('user')
-					.values({ name, login_type: 'regular' })
-					.returning('id')
-					.executeTakeFirst()
-				if (!user) throw new Error('User creation failed')
-				await tx
-					.insertInto('user_privilege')
-					.values({
-						user_id: user.id,
-						privilege: 'consumer'
-					})
-					.executeTakeFirstOrThrow()
-				return await tx
-					.insertInto('user_data')
-					.values({ login_id: user.id, username, password: hashedPassword })
-					.executeTakeFirstOrThrow()
+			const success = await createUser({
+				name,
+				username,
+				password,
+				privilege: 'consumer'
 			})
-			if (!user) {
+			if (!success) {
 				reply.code(400).send({ message: 'User creation failed' })
 				return
 			}
@@ -93,16 +86,7 @@ export default async function init(app: FastifyInstance) {
 		},
 		async (req, reply) => {
 			const { username, password } = req.body
-			const user = await db
-				.selectFrom('user_data')
-				.select('password')
-				.where('username', '=', username)
-				.executeTakeFirst()
-			if (!user) {
-				reply.code(400).send({ message: 'Invalid user or password' })
-				return
-			}
-			const valid = await verify(password, user.password)
+			const valid = await validateUser(username, password)
 			if (!valid) {
 				reply.code(400).send({ message: 'Invalid user or password' })
 				return
