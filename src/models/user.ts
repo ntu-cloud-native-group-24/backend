@@ -48,15 +48,21 @@ export async function validateUser(username: string, password: string) {
 	if (!userLogin) return false
 	return await verify(password, userLogin.password)
 }
-export async function validateUserAndIssueToken(username: string, password: string) {
-	if (!(await validateUser(username, password))) return
-	const token = crypto.getRandomValues(Buffer.alloc(16)).toString('hex')
-	const { id } = await db
+export async function getUserIdByUsername(username: string) {
+	const user = await db
 		.selectFrom('users')
 		.leftJoin('user_login', 'users.id', 'user_login.user_id')
 		.where('username', '=', username)
 		.select('users.id')
-		.executeTakeFirstOrThrow()
+		.executeTakeFirst()
+	if (!user) return
+	return user.id
+}
+export async function validateUserAndIssueToken(username: string, password: string) {
+	if (!(await validateUser(username, password))) return
+	const token = crypto.getRandomValues(Buffer.alloc(16)).toString('hex')
+	const id = await getUserIdByUsername(username)
+	if (!id) return
 	await redis.setex(REDIS_TOKEN_PREFIX + token, REDIS_TOKEN_EXPIRY, id.toString())
 	return token
 }
