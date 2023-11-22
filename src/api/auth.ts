@@ -16,7 +16,8 @@ export default async function init(app: FastifyInstance) {
 						description: 'Successful response',
 						type: 'object',
 						properties: {
-							message: { type: 'string' }
+							message: { type: 'string' },
+							token: { type: 'string' }
 						}
 					},
 					400: {
@@ -71,7 +72,8 @@ export default async function init(app: FastifyInstance) {
 						description: 'Successful response',
 						type: 'object',
 						properties: {
-							message: { type: 'string' }
+							message: { type: 'string' },
+							token: { type: 'string' }
 						}
 					},
 					400: {
@@ -86,12 +88,12 @@ export default async function init(app: FastifyInstance) {
 		},
 		async (req, reply) => {
 			const { username, password } = req.body
-			const valid = await User.validateUser(username, password)
-			if (!valid) {
+			const token = await User.validateUserAndIssueToken(username, password)
+			if (!token) {
 				reply.code(400).send({ message: 'Invalid user or password' })
 				return
 			}
-			reply.send({ message: 'Login successful' })
+			reply.send({ message: 'Login successful', token })
 		}
 	)
 }

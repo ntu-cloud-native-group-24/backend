@@ -1,6 +1,11 @@
 import { db } from '../db'
 import { PrivilegeType } from '../db/types'
 import { hash, verify } from '../utils/password'
+import { redis } from '../redis'
+import * as crypto from 'crypto'
+
+export const REDIS_TOKEN_PREFIX = 'token:'
+export const REDIS_TOKEN_EXPIRY = 60 * 60 * 24 * 7 // 1 week
 
 export async function createUser({
 	name,
@@ -42,4 +47,16 @@ export async function validateUser(username: string, password: string) {
 	const userLogin = await findUserLogin(username)
 	if (!userLogin) return false
 	return await verify(password, userLogin.password)
+}
+export async function validateUserAndIssueToken(username: string, password: string) {
+	if (!(await validateUser(username, password))) return
+	const token = crypto.getRandomValues(Buffer.alloc(16)).toString('hex')
+	const { id } = await db
+		.selectFrom('users')
+		.leftJoin('user_login', 'users.id', 'user_login.user_id')
+		.where('username', '=', username)
+		.select('users.id')
+		.executeTakeFirstOrThrow()
+	await redis.setex(REDIS_TOKEN_PREFIX + token, REDIS_TOKEN_EXPIRY, id.toString())
+	return token
 }
