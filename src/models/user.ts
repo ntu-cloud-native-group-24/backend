@@ -65,3 +65,8 @@ export async function validateTokenAndGetUserId(token: string) {
 	if (!id) return
 	return parseInt(id)
 }
+export async function validateTokenAndGetUser(token: string) {
+	const id = await validateTokenAndGetUserId(token)
+	if (!id) return
+	return await db.selectFrom('users').where('id', '=', id).select(['id', 'name']).executeTakeFirstOrThrow()
+}

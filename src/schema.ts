@@ -31,3 +31,13 @@ export const StoreDef = Type.Object(
 )
 export const StoreTypeRef = Type.Ref(StoreDef)
 export type StoreType = Static<typeof StoreDef>
+
+export const UserDef = Type.Object(
+	{
+		id: Type.Number(),
+		name: Type.String()
+	},
+	{ $id: 'User' }
+)
+export const UserTypeRef = Type.Ref(UserDef)
+export type UserType = Static<typeof UserDef>

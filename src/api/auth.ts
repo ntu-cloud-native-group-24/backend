@@ -1,6 +1,37 @@
-import { FastifyInstance } from 'fastify'
-import { RegisterUserRef, RegisterUserType, LoginUserRef, LoginUserType } from '../schema'
+import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
+import { RegisterUserRef, RegisterUserType, LoginUserRef, LoginUserType, UserDef, UserType } from '../schema'
 import * as User from '../models/user'
+
+declare module 'fastify' {
+	interface FastifyRequest {
+		user: UserType
+	}
+}
+
+export async function initAuthMiddleware(app: FastifyInstance) {
+	app.decorateRequest('user', null)
+	app.addHook('onRequest', async (req, reply) => {
+		const token = req.headers['x-api-key']
+		if (!token || typeof token !== 'string') {
+			// simply skip authentication if no token is provided
+			// whether authentication is required or not is determined by the route
+			return
+		}
+		const user = await User.validateTokenAndGetUser(token)
+		if (!user) {
+			reply.code(401).send({ message: 'Unauthorized' })
+			return
+		}
+		req.user = user
+	})
+}
+
+export async function loginRequired(request: FastifyRequest, reply: FastifyReply) {
+	if (!request.user) {
+		reply.code(401).send({ message: 'Unauthorized' })
+		return
+	}
+}
 
 export default async function init(app: FastifyInstance) {
 	app.post<{ Body: RegisterUserType }>(
@@ -94,6 +125,43 @@ export default async function init(app: FastifyInstance) {
 				return
 			}
 			reply.send({ message: 'Login successful', token })
+		}
+	)
+
+	app.get(
+		'/me',
+		{
+			preHandler: loginRequired,
+			schema: {
+				description: 'Get current user',
+				tags: ['auth'],
+				summary: 'Get current user',
+				response: {
+					200: {
+						description: 'Successful response',
+						type: 'object',
+						properties: {
+							message: { type: 'string' },
+							user: UserDef
+						}
+					},
+					401: {
+						description: 'Unauthorized',
+						type: 'object',
+						properties: {
+							message: { type: 'string' }
+						}
+					}
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
+			}
+		},
+		async (req, reply) => {
+			reply.send({ message: 'Success', user: req.user })
 		}
 	)
 }

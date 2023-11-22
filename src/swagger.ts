@@ -23,6 +23,7 @@ export async function initSwagger(app: FastifyInstance) {
 			consumes: ['application/json'],
 			produces: ['application/json'],
 			tags: [
+				{ name: 'auth', description: 'Authentication end-points' },
 				{ name: 'misc', description: 'Miscellaneous end-points' },
 				{ name: 'stores', description: 'Store related end-points' },
 				{ name: 'user', description: 'User related end-points' },
@@ -43,7 +44,7 @@ export async function initSwagger(app: FastifyInstance) {
 			securityDefinitions: {
 				apiKey: {
 					type: 'apiKey',
-					name: 'apiKey',
+					name: 'X-API-KEY',
 					in: 'header'
 				}
 			}
