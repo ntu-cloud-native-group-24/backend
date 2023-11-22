@@ -65,5 +65,7 @@ test('POST /api/login', async () => {
 		}
 	})
 	expect(response.statusCode).toBe(200)
-	expect(response.json()).toEqual({ message: 'Login successful' })
+	const obj = response.json()
+	expect(obj).toMatchObject({ message: 'Login successful' })
+	expect(typeof obj.token).toBe('string')
 })

@@ -21,3 +21,10 @@ export async function findUserLogin(username: string) {
 export async function validateUser(username: string, password: string) {
 	return db.get(username) === password
 }
+export async function validateUserAndIssueToken(username: string, password: string) {
+	if (!(await validateUser(username, password))) return
+	return 'token'
+}
+export async function validateTokenAndGetUserId(token: string) {
+	return token === 'token' ? 1 : undefined
+}

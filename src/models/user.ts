@@ -60,3 +60,8 @@ export async function validateUserAndIssueToken(username: string, password: stri
 	await redis.setex(REDIS_TOKEN_PREFIX + token, REDIS_TOKEN_EXPIRY, id.toString())
 	return token
 }
+export async function validateTokenAndGetUserId(token: string) {
+	const id = await redis.get(REDIS_TOKEN_PREFIX + token)
+	if (!id) return
+	return parseInt(id)
+}
