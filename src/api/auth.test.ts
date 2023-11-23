@@ -98,12 +98,15 @@ describe('Login and Auth', () => {
 			}
 		})
 		expect(response.statusCode).toBe(200)
-		expect(response.json()).toMatchObject({
+		const obj = response.json()
+		expect(obj).toMatchObject({
 			message: 'Success',
 			user: {
 				name: 'test'
 			}
 		})
+		expect(typeof obj.user.id).toBe('number')
+		expect(obj.user.privileges).toContain('consumer')
 	})
 })
 test('Login (incorrect password)', async () => {

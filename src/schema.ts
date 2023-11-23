@@ -32,10 +32,16 @@ export const StoreDef = Type.Object(
 export const StoreTypeRef = Type.Ref(StoreDef)
 export type StoreType = Static<typeof StoreDef>
 
+export const PrivilegeTypeDef = Type.Union([Type.Literal('consumer'), Type.Literal('store_manager')], {
+	$id: 'PrivilegeType'
+})
+export const PrivilegeTypeRef = Type.Ref(PrivilegeTypeDef)
+export type PrivilegeType = Static<typeof PrivilegeTypeDef>
 export const UserDef = Type.Object(
 	{
 		id: Type.Number(),
-		name: Type.String()
+		name: Type.String(),
+		privileges: Type.Array(PrivilegeTypeDef)
 	},
 	{ $id: 'User' }
 )

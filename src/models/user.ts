@@ -71,8 +71,22 @@ export async function validateTokenAndGetUserId(token: string) {
 	if (!id) return
 	return parseInt(id)
 }
+export async function getUserByIdOrThrow(id: number) {
+	const res = await db
+		.selectFrom('users')
+		.innerJoin('user_privileges', 'users.id', 'user_privileges.user_id')
+		.where('id', '=', id)
+		.select(['id', 'name', 'privilege'])
+		.execute()
+	if (!res || res.length === 0) throw new Error('User not found')
+	return {
+		id: res[0].id,
+		name: res[0].name,
+		privileges: res.map(r => r.privilege)
+	}
+}
 export async function validateTokenAndGetUser(token: string) {
 	const id = await validateTokenAndGetUserId(token)
 	if (!id) return
-	return await db.selectFrom('users').where('id', '=', id).select(['id', 'name']).executeTakeFirstOrThrow()
+	return await getUserByIdOrThrow(id)
 }
