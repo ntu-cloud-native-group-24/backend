@@ -1,16 +1,9 @@
 import '../app-test-setup'
 import { expect, test, describe, jest } from '@jest/globals'
+import { randString } from '../utils'
 
-const username = Math.random()
-	.toString(36)
-	.slice(2, 2 + 8)
-const password =
-	Math.random()
-		.toString(36)
-		.slice(2, 2 + 6) +
-	Math.random()
-		.toString(36)
-		.slice(2, 2 + 6)
+const username = randString(8)
+const password = randString(12)
 
 test('Register', async () => {
 	const response = await app.inject({
@@ -32,13 +25,7 @@ test('Register (bad username)', async () => {
 		payload: {
 			name: 'test',
 			username: 'test',
-			password:
-				Math.random()
-					.toString(36)
-					.slice(2, 2 + 6) +
-				Math.random()
-					.toString(36)
-					.slice(2, 2 + 6)
+			password: randString(12)
 		}
 	})
 	expect(response.statusCode).toBe(400)
@@ -50,9 +37,7 @@ test('Register (bad password)', async () => {
 		url: '/api/register',
 		payload: {
 			name: 'test',
-			username: Math.random()
-				.toString(36)
-				.slice(2, 2 + 8),
+			username: randString(8),
 			password: 'test'
 		}
 	})
