@@ -1,5 +1,13 @@
 import { FastifyInstance } from 'fastify'
-import { wrapSuccessOrNotSchema, StoreTypeRef, StoreType, StoreWithoutIdTypeRef, StoreWithoutIdType } from '../schema'
+import {
+	success,
+	fail,
+	wrapSuccessOrNotSchema,
+	StoreTypeRef,
+	StoreType,
+	StoreWithoutIdTypeRef,
+	StoreWithoutIdType
+} from '../schema'
 import { loginRequired } from './auth'
 import { getAllStores, getStoreById, createStore } from '../models/store'
 
@@ -24,10 +32,11 @@ export default async function init(app: FastifyInstance) {
 			}
 		},
 		async (req, reply) => {
-			reply.send({
-				success: true,
-				stores: await getAllStores()
-			})
+			reply.send(
+				success({
+					stores: await getAllStores()
+				})
+			)
 		}
 	)
 	app.get<{
@@ -62,9 +71,9 @@ export default async function init(app: FastifyInstance) {
 			const { id } = req.params
 			const store = await getStoreById(id)
 			if (!store) {
-				return reply.code(404).send({ success: false })
+				return reply.code(404).send(fail())
 			}
-			reply.send({ success: true, store })
+			reply.send(success({ store }))
 		}
 	)
 	app.post<{
@@ -109,9 +118,9 @@ export default async function init(app: FastifyInstance) {
 				picture_url
 			})
 			if (id) {
-				reply.send({ success: true, id })
+				reply.send(success({ id }))
 			} else {
-				reply.code(400).send({ success: false, id })
+				reply.code(400).send(fail('Unable to create store'))
 			}
 		}
 	)

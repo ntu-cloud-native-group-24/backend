@@ -110,11 +110,13 @@ describe('Login and Auth', () => {
 			}
 		})
 		expect(response.statusCode).toBe(200)
-		const obj = response.json()
-		expect(obj).toMatchObject({
-			name: 'test',
-			id: expect.any(Number),
-			privileges: ['consumer']
+		expect(response.json()).toMatchObject({
+			success: true,
+			user: {
+				name: 'test',
+				id: expect.any(Number),
+				privileges: ['consumer']
+			}
 		})
 	})
 })
@@ -140,5 +142,5 @@ test('Get me (wrong token)', async () => {
 		}
 	})
 	expect(response.statusCode).toBe(401)
-	expect(response.json()).toMatchObject({ message: 'Unauthorized' })
+	expect(response.json()).toMatchObject({ message: 'Unable to validate token' })
 })

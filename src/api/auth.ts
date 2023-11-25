@@ -1,6 +1,8 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import {
 	wrapSuccessOrNotSchema,
+	success,
+	fail,
 	RegisterUserRef,
 	RegisterUserType,
 	LoginUserRef,
@@ -29,7 +31,7 @@ export async function initAuthMiddleware(app: FastifyInstance) {
 		}
 		const user = await User.validateTokenAndGetUser(token)
 		if (!user) {
-			reply.code(401).send({ success: false, message: 'Unauthorized' })
+			reply.code(401).send(fail('Unable to validate token'))
 			return
 		}
 		req.user = user
@@ -38,7 +40,7 @@ export async function initAuthMiddleware(app: FastifyInstance) {
 
 export async function loginRequired(request: FastifyRequest, reply: FastifyReply) {
 	if (!request.user) {
-		reply.code(401).send({ message: 'Unauthorized' })
+		reply.code(401).send(fail('Unauthorized'))
 		return
 	}
 }
@@ -80,29 +82,29 @@ export default async function init(app: FastifyInstance) {
 			const { privilege } = req.query
 			const { name, username, password } = req.body
 			if (username.length < 8) {
-				reply.code(400).send({ success: false, message: 'Username must be at least 8 characters' })
+				reply.code(400).send(fail('Username must be at least 8 characters'))
 				return
 			}
 			if (password.length < 12) {
-				reply.code(400).send({ success: false, message: 'Password must be at least 12 characters' })
+				reply.code(400).send(fail('Password must be at least 12 characters'))
 				return
 			}
 			const found = !!(await User.findUserLogin(username))
 			if (found) {
-				reply.code(400).send({ success: false, message: 'User already exists' })
+				reply.code(400).send(fail('User already exists'))
 				return
 			}
-			const success = await User.createUser({
+			const good = await User.createUser({
 				name,
 				username,
 				password,
 				privilege
 			})
-			if (!success) {
-				reply.code(400).send({ success: false, message: 'User creation failed' })
+			if (!good) {
+				reply.code(400).send(fail('User creation failed'))
 				return
 			}
-			reply.send({ success: true, message: 'User created' })
+			reply.send(success({}, 'User created'))
 		}
 	)
 
@@ -134,10 +136,10 @@ export default async function init(app: FastifyInstance) {
 			const { username, password } = req.body
 			const token = await User.validateUserAndIssueToken(username, password)
 			if (!token) {
-				reply.code(400).send({ success: false, message: 'Invalid user or password' })
+				reply.code(400).send(fail('Invalid user or password'))
 				return
 			}
-			reply.send({ success: true, message: 'Login successful', token })
+			reply.send(success({ token }, 'Login successful'))
 		}
 	)
 
@@ -150,7 +152,9 @@ export default async function init(app: FastifyInstance) {
 				tags: ['auth'],
 				summary: 'Get current user',
 				response: {
-					200: UserDef
+					200: wrapSuccessOrNotSchema({
+						user: UserDef
+					})
 				},
 				security: [
 					{
@@ -160,7 +164,11 @@ export default async function init(app: FastifyInstance) {
 			}
 		},
 		async (req, reply) => {
-			reply.send(req.user)
+			reply.send(
+				success({
+					user: req.user
+				})
+			)
 		}
 	)
 }
