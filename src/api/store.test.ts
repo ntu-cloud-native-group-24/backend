@@ -1,6 +1,6 @@
 import '../app-test-setup'
 import { expect, test, describe, beforeAll, jest } from '@jest/globals'
-import { createUserOfPrivilege } from '../utils/testutils'
+import { createUserOfPrivilegeAndReturnToken } from '../utils/testutils'
 
 let consumer: string
 let storeManager: string
@@ -14,8 +14,8 @@ const storeInfo = {
 }
 
 beforeAll(async () => {
-	consumer = await createUserOfPrivilege(app, 'consumer')
-	storeManager = await createUserOfPrivilege(app, 'store_manager')
+	consumer = await createUserOfPrivilegeAndReturnToken(app, 'consumer')
+	storeManager = await createUserOfPrivilegeAndReturnToken(app, 'store_manager')
 })
 
 test('Create store', async () => {

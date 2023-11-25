@@ -1,6 +1,9 @@
+import { FastifyInstance } from 'fastify'
 import { randString } from '../utils'
+import { createUser, getUserIdByUsername } from '../models/user'
+import { PrivilegeType } from '../schema'
 
-export async function createUserOfPrivilege(app: any, privilege: string) {
+export async function createUserOfPrivilegeAndReturnToken(app: FastifyInstance, privilege: string) {
 	const username = randString(8)
 	const password = randString(12)
 	await app.inject({
@@ -24,4 +27,16 @@ export async function createUserOfPrivilege(app: any, privilege: string) {
 		}
 	})
 	return response.json().token
+}
+
+export async function createUserOfPrivilegeAndReturnUID(privilege: PrivilegeType) {
+	const username = randString(8)
+	const password = randString(12)
+	await createUser({
+		name: 'test',
+		username,
+		password,
+		privilege
+	})
+	return getUserIdByUsername(username) as Promise<number>
 }
