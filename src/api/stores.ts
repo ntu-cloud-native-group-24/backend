@@ -7,7 +7,6 @@ export default async function init(app: FastifyInstance) {
 	app.get(
 		'/store',
 		{
-			preHandler: loginRequired,
 			schema: {
 				description: 'Get all stores',
 				tags: ['store'],
@@ -36,7 +35,6 @@ export default async function init(app: FastifyInstance) {
 	}>(
 		'/store/:id',
 		{
-			preHandler: loginRequired,
 			schema: {
 				description: 'Get store by id',
 				tags: ['store'],

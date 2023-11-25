@@ -34,10 +34,7 @@ test('Create store', async () => {
 test('Get store by id', async () => {
 	const response = await app.inject({
 		method: 'GET',
-		url: `/api/store/${storeId}`,
-		headers: {
-			'X-API-KEY': storeManager
-		}
+		url: `/api/store/${storeId}`
 	})
 	expect(response.statusCode).toBe(200)
 	expect(response.json()).toMatchObject({
@@ -51,10 +48,7 @@ test('Get store by id', async () => {
 test('Get stores', async () => {
 	const response = await app.inject({
 		method: 'GET',
-		url: `/api/store`,
-		headers: {
-			'X-API-KEY': consumer
-		}
+		url: `/api/store`
 	})
 	expect(response.statusCode).toBe(200)
 	expect(response.json()).toMatchObject({ success: true, stores: expect.any(Array) })
