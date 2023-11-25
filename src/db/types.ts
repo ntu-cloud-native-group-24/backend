@@ -67,10 +67,20 @@ export interface Orders {
 }
 
 export interface Stores {
-	description: string | null
+	address: string
+	description: string
 	id: Generated<number>
 	name: string
 	owner_id: number
+	picture_url: string
+}
+
+export interface StoresOpeningHours {
+	close_time: string
+	day: number
+	id: Generated<number>
+	open_time: string
+	store_id: number
 }
 
 export interface StoreTags {
@@ -109,6 +119,7 @@ export interface DB {
 	store_tags: StoreTags
 	store_tags_assoc: StoreTagsAssoc
 	stores: Stores
+	stores_opening_hours: StoresOpeningHours
 	user_login: UserLogin
 	user_privileges: UserPrivileges
 	users: Users

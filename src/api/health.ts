@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
+import { FastifyInstance } from 'fastify'
 
 export default async function init(app: FastifyInstance) {
 	app.get(
@@ -19,7 +19,7 @@ export default async function init(app: FastifyInstance) {
 				}
 			}
 		},
-		(req: FastifyRequest, reply: FastifyReply) => {
+		(req, reply) => {
 			reply.send({ status: 'ok' })
 		}
 	)

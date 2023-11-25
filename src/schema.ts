@@ -1,4 +1,12 @@
-import { Static, Type } from '@sinclair/typebox'
+import { Static, Type } from './typebox-openapi'
+
+export function wrapSuccessOrNotSchema<T>(obj: T) {
+	return {
+		success: { type: 'boolean' },
+		message: { type: 'string', nullable: true },
+		...obj
+	}
+}
 
 export const LoginUserDef = Type.Object(
 	{
@@ -23,20 +31,29 @@ export type RegisterUserType = Static<typeof RegisterUserDef>
 
 export const StoreDef = Type.Object(
 	{
-		id: Type.String({ format: 'uuid' }),
-		displayName: Type.String(),
-		storePicture: Type.String()
+		id: Type.Number(),
+		name: Type.String(),
+		description: Type.String(),
+		address: Type.String(),
+		picture_url: Type.String()
 	},
 	{ $id: 'Store' }
 )
 export const StoreTypeRef = Type.Ref(StoreDef)
 export type StoreType = Static<typeof StoreDef>
 
-export const PrivilegeTypeDef = Type.Union([Type.Literal('consumer'), Type.Literal('store_manager')], {
+export const StoreWithoutIdDef = Type.Omit(StoreDef, ['id'], {
+	$id: 'StoreWithoutId'
+})
+export const StoreWithoutIdTypeRef = Type.Ref(StoreWithoutIdDef)
+export type StoreWithoutIdType = Static<typeof StoreWithoutIdDef>
+
+export const PrivilegeTypeDef = Type.StringLiteralUnion(['consumer', 'store_manager'], {
 	$id: 'PrivilegeType'
 })
 export const PrivilegeTypeRef = Type.Ref(PrivilegeTypeDef)
 export type PrivilegeType = Static<typeof PrivilegeTypeDef>
+
 export const UserDef = Type.Object(
 	{
 		id: Type.Number(),

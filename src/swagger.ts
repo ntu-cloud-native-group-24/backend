@@ -1,12 +1,15 @@
 import { FastifyInstance } from 'fastify'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
-import { LoginUserDef, RegisterUserDef, StoreDef } from './schema'
+import { LoginUserDef, RegisterUserDef, StoreDef, StoreWithoutIdDef, PrivilegeTypeDef, UserDef } from './schema'
 
 export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(LoginUserDef)
 	app.addSchema(RegisterUserDef)
 	app.addSchema(StoreDef)
+	app.addSchema(StoreWithoutIdDef)
+	app.addSchema(PrivilegeTypeDef)
+	app.addSchema(UserDef)
 	await app.register(fastifySwagger, {
 		swagger: {
 			info: {
@@ -25,7 +28,7 @@ export async function initSwagger(app: FastifyInstance) {
 			tags: [
 				{ name: 'auth', description: 'Authentication end-points' },
 				{ name: 'misc', description: 'Miscellaneous end-points' },
-				{ name: 'stores', description: 'Store related end-points' },
+				{ name: 'store', description: 'Store related end-points' },
 				{ name: 'user', description: 'User related end-points' },
 				{ name: 'code', description: 'Code related end-points' }
 			],

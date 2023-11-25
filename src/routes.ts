@@ -4,7 +4,7 @@ import initApi from './api'
 export async function initRoutes(app: FastifyInstance) {
 	app.register(initApi, { prefix: '/api' })
 
-	// reverse this for reference
+	// reserve this for reference
 	app.put(
 		'/some-route/:id',
 		{

@@ -9,6 +9,9 @@ test('Register', async () => {
 	const response = await app.inject({
 		method: 'POST',
 		url: '/api/register',
+		query: {
+			privilege: 'consumer'
+		},
 		payload: {
 			name: 'test',
 			username,
@@ -16,12 +19,30 @@ test('Register', async () => {
 		}
 	})
 	expect(response.statusCode).toBe(200)
-	expect(response.json()).toEqual({ message: 'User created' })
+	expect(response.json()).toEqual({ success: true, message: 'User created' })
+})
+test('Register (wrong privilege)', async () => {
+	const response = await app.inject({
+		method: 'POST',
+		url: '/api/register',
+		query: {
+			privilege: 'peko'
+		},
+		payload: {
+			name: 'test',
+			username: randString(8),
+			password: randString(12)
+		}
+	})
+	expect(response.statusCode).toBe(400)
 })
 test('Register (bad username)', async () => {
 	const response = await app.inject({
 		method: 'POST',
 		url: '/api/register',
+		query: {
+			privilege: 'consumer'
+		},
 		payload: {
 			name: 'test',
 			username: 'test',
@@ -29,12 +50,15 @@ test('Register (bad username)', async () => {
 		}
 	})
 	expect(response.statusCode).toBe(400)
-	expect(response.json()).toEqual({ message: 'Username must be at least 8 characters' })
+	expect(response.json()).toEqual({ success: false, message: 'Username must be at least 8 characters' })
 })
 test('Register (bad password)', async () => {
 	const response = await app.inject({
 		method: 'POST',
 		url: '/api/register',
+		query: {
+			privilege: 'consumer'
+		},
 		payload: {
 			name: 'test',
 			username: randString(8),
@@ -42,12 +66,15 @@ test('Register (bad password)', async () => {
 		}
 	})
 	expect(response.statusCode).toBe(400)
-	expect(response.json()).toEqual({ message: 'Password must be at least 12 characters' })
+	expect(response.json()).toEqual({ success: false, message: 'Password must be at least 12 characters' })
 })
 test('Register (user exists)', async () => {
 	const response = await app.inject({
 		method: 'POST',
 		url: '/api/register',
+		query: {
+			privilege: 'consumer'
+		},
 		payload: {
 			name: 'test',
 			username,
@@ -55,7 +82,7 @@ test('Register (user exists)', async () => {
 		}
 	})
 	expect(response.statusCode).toBe(400)
-	expect(response.json()).toEqual({ message: 'User already exists' })
+	expect(response.json()).toEqual({ success: false, message: 'User already exists' })
 })
 describe('Login and Auth', () => {
 	let token: string
@@ -70,7 +97,7 @@ describe('Login and Auth', () => {
 		})
 		expect(loginResponse.statusCode).toBe(200)
 		const obj = loginResponse.json()
-		expect(obj).toMatchObject({ message: 'Login successful' })
+		expect(obj).toMatchObject({ success: true, message: 'Login successful' })
 		expect(typeof obj.token).toBe('string')
 		token = obj.token
 	})
@@ -85,13 +112,10 @@ describe('Login and Auth', () => {
 		expect(response.statusCode).toBe(200)
 		const obj = response.json()
 		expect(obj).toMatchObject({
-			message: 'Success',
-			user: {
-				name: 'test'
-			}
+			name: 'test',
+			id: expect.any(Number),
+			privileges: ['consumer']
 		})
-		expect(typeof obj.user.id).toBe('number')
-		expect(obj.user.privileges).toContain('consumer')
 	})
 })
 test('Login (incorrect password)', async () => {

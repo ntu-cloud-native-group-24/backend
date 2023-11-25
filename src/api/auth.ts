@@ -1,5 +1,15 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { RegisterUserRef, RegisterUserType, LoginUserRef, LoginUserType, UserDef, UserType } from '../schema'
+import {
+	wrapSuccessOrNotSchema,
+	RegisterUserRef,
+	RegisterUserType,
+	LoginUserRef,
+	LoginUserType,
+	UserDef,
+	UserType,
+	PrivilegeTypeRef,
+	PrivilegeType
+} from '../schema'
 import * as User from '../models/user'
 
 declare module 'fastify' {
@@ -19,7 +29,7 @@ export async function initAuthMiddleware(app: FastifyInstance) {
 		}
 		const user = await User.validateTokenAndGetUser(token)
 		if (!user) {
-			reply.code(401).send({ message: 'Unauthorized' })
+			reply.code(401).send({ success: false, message: 'Unauthorized' })
 			return
 		}
 		req.user = user
@@ -34,7 +44,10 @@ export async function loginRequired(request: FastifyRequest, reply: FastifyReply
 }
 
 export default async function init(app: FastifyInstance) {
-	app.post<{ Body: RegisterUserType }>(
+	app.post<{
+		Querystring: { privilege: PrivilegeType }
+		Body: RegisterUserType
+	}>(
 		'/register',
 		{
 			schema: {
@@ -42,51 +55,54 @@ export default async function init(app: FastifyInstance) {
 				description: 'Register a new user',
 				tags: ['auth'],
 				summary: 'Register a new user',
+				querystring: {
+					type: 'object',
+					properties: {
+						privilege: PrivilegeTypeRef
+					},
+					required: ['privilege']
+				},
 				response: {
 					200: {
 						description: 'Successful response',
 						type: 'object',
-						properties: {
-							message: { type: 'string' },
-							token: { type: 'string' }
-						}
+						properties: wrapSuccessOrNotSchema({})
 					},
 					400: {
 						description: 'Bad request',
 						type: 'object',
-						properties: {
-							message: { type: 'string' }
-						}
+						properties: wrapSuccessOrNotSchema({})
 					}
 				}
 			}
 		},
 		async (req, reply) => {
+			const { privilege } = req.query
 			const { name, username, password } = req.body
 			if (username.length < 8) {
-				reply.code(400).send({ message: 'Username must be at least 8 characters' })
+				reply.code(400).send({ success: false, message: 'Username must be at least 8 characters' })
 				return
 			}
 			if (password.length < 12) {
-				reply.code(400).send({ message: 'Password must be at least 12 characters' })
+				reply.code(400).send({ success: false, message: 'Password must be at least 12 characters' })
 				return
 			}
 			const found = !!(await User.findUserLogin(username))
 			if (found) {
-				reply.code(400).send({ message: 'User already exists' })
+				reply.code(400).send({ success: false, message: 'User already exists' })
 				return
 			}
 			const success = await User.createUser({
 				name,
 				username,
 				password,
-				privilege: 'consumer'
+				privilege
 			})
 			if (!success) {
-				reply.code(400).send({ message: 'User creation failed' })
+				reply.code(400).send({ success: false, message: 'User creation failed' })
 				return
 			}
-			reply.send({ message: 'User created' })
+			reply.send({ success: true, message: 'User created' })
 		}
 	)
 
@@ -102,17 +118,14 @@ export default async function init(app: FastifyInstance) {
 					200: {
 						description: 'Successful response',
 						type: 'object',
-						properties: {
-							message: { type: 'string' },
+						properties: wrapSuccessOrNotSchema({
 							token: { type: 'string' }
-						}
+						})
 					},
 					400: {
 						description: 'Bad request',
 						type: 'object',
-						properties: {
-							message: { type: 'string' }
-						}
+						properties: wrapSuccessOrNotSchema({})
 					}
 				}
 			}
@@ -121,10 +134,10 @@ export default async function init(app: FastifyInstance) {
 			const { username, password } = req.body
 			const token = await User.validateUserAndIssueToken(username, password)
 			if (!token) {
-				reply.code(400).send({ message: 'Invalid user or password' })
+				reply.code(400).send({ success: false, message: 'Invalid user or password' })
 				return
 			}
-			reply.send({ message: 'Login successful', token })
+			reply.send({ success: true, message: 'Login successful', token })
 		}
 	)
 
@@ -137,21 +150,7 @@ export default async function init(app: FastifyInstance) {
 				tags: ['auth'],
 				summary: 'Get current user',
 				response: {
-					200: {
-						description: 'Successful response',
-						type: 'object',
-						properties: {
-							message: { type: 'string' },
-							user: UserDef
-						}
-					},
-					401: {
-						description: 'Unauthorized',
-						type: 'object',
-						properties: {
-							message: { type: 'string' }
-						}
-					}
+					200: UserDef
 				},
 				security: [
 					{
@@ -161,7 +160,7 @@ export default async function init(app: FastifyInstance) {
 			}
 		},
 		async (req, reply) => {
-			reply.send({ message: 'Success', user: req.user })
+			reply.send(req.user)
 		}
 	)
 }
