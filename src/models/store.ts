@@ -5,33 +5,58 @@ export function isStoreManager(user_id: number) {
 	return checkUserPrivilege(user_id, 'store_manager')
 }
 export async function createStore({
-	user_id,
+	owner_id,
 	name,
 	description,
 	address,
 	picture_url
 }: {
-	user_id: number
+	owner_id: number
 	name: string
 	description: string
 	address: string
 	picture_url: string
 }) {
-	if (!(await isStoreManager(user_id))) {
+	if (!(await isStoreManager(owner_id))) {
 		return null
 	}
-	const { id } = await db
+	const res = await db
 		.insertInto('stores')
 		.values({
-			owner_id: user_id,
+			owner_id,
 			name,
 			description,
 			address,
 			picture_url
 		})
-		.returning('id')
+		.returningAll()
 		.executeTakeFirstOrThrow()
-	return id
+	return res
+}
+export async function modifySrore(
+	user_id: number,
+	obj: {
+		id: number
+		owner_id?: number
+		name?: string
+		description?: string
+		address?: string
+		picture_url?: string
+	}
+) {
+	if (!(await isStoreManager(user_id))) {
+		return null
+	}
+	if ((await getStoreById(obj.id))?.owner_id !== user_id) {
+		return null
+	}
+	const res = await db
+		.updateTable('stores')
+		.set(obj)
+		.where('id', '=', obj.id)
+		.returningAll()
+		.executeTakeFirstOrThrow()
+	return res
 }
 export async function getAllStores() {
 	return await db.selectFrom('stores').selectAll().execute()

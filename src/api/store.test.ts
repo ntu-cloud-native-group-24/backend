@@ -4,13 +4,20 @@ import { createUserOfPrivilegeAndReturnToken } from '../utils/testutils'
 
 let consumer: string
 let storeManager: string
-let storeId: number
+let store: any
 
 const storeInfo = {
 	name: 'Haachama Cooking',
 	description: 'Haachama Cooking 123',
 	address: 'Tokyo, Japan',
 	picture_url: 'https://www.youtube.com/watch?v=IT186xDTwUU'
+}
+const storeInfo2 = {
+	address: 'Australia'
+}
+const storeInfo3 = {
+	description: 'Back to Japan',
+	address: 'Tokyo, Japan'
 }
 
 beforeAll(async () => {
@@ -28,19 +35,25 @@ test('Create store', async () => {
 		payload: storeInfo
 	})
 	expect(response.statusCode).toBe(200)
-	expect(response.json()).toMatchObject({ id: expect.any(Number) })
-	storeId = response.json().id
+	expect(response.json()).toMatchObject({
+		success: true,
+		store: {
+			id: expect.any(Number),
+			...storeInfo
+		}
+	})
+	store = response.json().store
 })
 test('Get store by id', async () => {
 	const response = await app.inject({
 		method: 'GET',
-		url: `/api/store/${storeId}`
+		url: `/api/store/${store.id}`
 	})
 	expect(response.statusCode).toBe(200)
 	expect(response.json()).toMatchObject({
 		success: true,
 		store: {
-			id: storeId,
+			id: store.id,
 			...storeInfo
 		}
 	})
@@ -55,7 +68,7 @@ test('Get stores', async () => {
 	expect(response.json().stores).toEqual(
 		expect.arrayContaining([
 			{
-				id: storeId,
+				id: store.id,
 				...storeInfo
 			}
 		])
@@ -69,6 +82,84 @@ test("Consumer can't create store", async () => {
 			'X-API-KEY': consumer
 		},
 		payload: storeInfo
+	})
+	expect(response.statusCode).toBe(400)
+	expect(response.json()).toMatchObject({ success: false })
+})
+test('Modify store with PUT', async () => {
+	const response = await app.inject({
+		method: 'PUT',
+		url: `/api/store/${store.id}`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			...storeInfo,
+			...storeInfo2
+		}
+	})
+	expect(response.statusCode).toBe(200)
+	expect(response.json()).toMatchObject({
+		success: true,
+		store: {
+			id: store.id,
+			...storeInfo,
+			...storeInfo2
+		}
+	})
+})
+test('Modify store with PUT (incomplete info)', async () => {
+	const response = await app.inject({
+		method: 'PUT',
+		url: `/api/store/${store.id}`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: storeInfo2
+	})
+	expect(response.statusCode).toBe(400)
+})
+test('Modify store with PATCH', async () => {
+	const response = await app.inject({
+		method: 'PATCH',
+		url: `/api/store/${store.id}`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: storeInfo3
+	})
+	expect(response.statusCode).toBe(200)
+	expect(response.json()).toMatchObject({
+		success: true,
+		store: {
+			id: store.id,
+			...storeInfo,
+			...storeInfo2,
+			...storeInfo3
+		}
+	})
+})
+test('Consumer can not modify store', async () => {
+	const response = await app.inject({
+		method: 'PATCH',
+		url: `/api/store/${store.id}`,
+		headers: {
+			'X-API-KEY': consumer
+		},
+		payload: storeInfo3
+	})
+	expect(response.statusCode).toBe(400)
+	expect(response.json()).toMatchObject({ success: false })
+})
+test('Non-owner can not modify store', async () => {
+	const storeManager2 = await createUserOfPrivilegeAndReturnToken(app, 'store_manager')
+	const response = await app.inject({
+		method: 'PATCH',
+		url: `/api/store/${store.id}`,
+		headers: {
+			'X-API-KEY': storeManager2
+		},
+		payload: storeInfo3
 	})
 	expect(response.statusCode).toBe(400)
 	expect(response.json()).toMatchObject({ success: false })

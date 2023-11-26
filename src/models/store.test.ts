@@ -1,15 +1,20 @@
 import { test, expect, beforeAll, jest } from '@jest/globals'
 import { createUserOfPrivilegeAndReturnUID } from '../utils/testutils'
-import { createStore, getStoreById, getAllStores } from './store'
+import { createStore, getStoreById, getAllStores, modifySrore } from './store'
 
 let consumer: number
 let store_manager: number
+let store: any
 
 const storeInfo = {
 	name: 'test',
 	description: 'test',
 	address: 'test',
 	picture_url: 'test'
+}
+const newStoreInfo = {
+	description: 'new test desc',
+	address: 'new test addr'
 }
 
 beforeAll(async () => {
@@ -18,18 +23,18 @@ beforeAll(async () => {
 })
 
 test('Create store', async () => {
-	const store = await createStore({
-		user_id: store_manager,
+	store = await createStore({
+		owner_id: store_manager,
 		...storeInfo
 	})
-	expect(store).toEqual(expect.any(Number))
-	expect(await getStoreById(store!)).toEqual({
-		id: store,
+	expect(store.id).toEqual(expect.any(Number))
+	expect(await getStoreById(store.id)).toEqual({
+		id: store.id,
 		owner_id: store_manager,
 		...storeInfo
 	})
 	expect(await getAllStores()).toContainEqual({
-		id: store,
+		id: store.id,
 		owner_id: store_manager,
 		...storeInfo
 	})
@@ -37,8 +42,38 @@ test('Create store', async () => {
 
 test('Create store as consumer', async () => {
 	const store = await createStore({
-		user_id: consumer,
+		owner_id: consumer,
 		...storeInfo
 	})
 	expect(store).toBe(null)
+})
+
+test('Modify store', async () => {
+	expect(
+		await modifySrore(store_manager, {
+			id: store.id,
+			...newStoreInfo
+		})
+	).toEqual({ ...store, ...newStoreInfo })
+	expect(await getStoreById(store.id)).toEqual({
+		...store,
+		...newStoreInfo
+	})
+})
+test('Modify store as consumer', async () => {
+	expect(
+		await modifySrore(consumer, {
+			id: store.id,
+			...newStoreInfo
+		})
+	).toBe(null)
+})
+test('Modify store as another store manager', async () => {
+	const store_manager2 = await createUserOfPrivilegeAndReturnUID('store_manager')
+	expect(
+		await modifySrore(store_manager2, {
+			id: store.id,
+			...newStoreInfo
+		})
+	).toBe(null)
 })

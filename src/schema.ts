@@ -72,6 +72,12 @@ export const StoreWithoutIdDef = Type.Omit(StoreDef, ['id'], {
 export const StoreWithoutIdTypeRef = Type.Ref(StoreWithoutIdDef)
 export type StoreWithoutIdType = Static<typeof StoreWithoutIdDef>
 
+export const PartialStoreWithoutIdDef = Type.Partial(StoreWithoutIdDef, {
+	$id: 'PartialStoreWithoutId'
+})
+export const PartialStoreWithoutIdTypeRef = Type.Ref(PartialStoreWithoutIdDef)
+export type PartialStoreWithoutIdType = Static<typeof PartialStoreWithoutIdDef>
+
 export const PrivilegeTypeDef = Type.StringLiteralUnion(['consumer', 'store_manager'], {
 	$id: 'PrivilegeType'
 })
