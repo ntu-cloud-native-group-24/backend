@@ -104,7 +104,7 @@ export const MealDef = Type.Object(
 		picture: Type.String(),
 		category: Type.String(),
 		is_available: Type.Boolean(),
-		customizations: Type.Object({}),
+		customizations: Type.Object({})
 	},
 	{ $id: 'Meal' }
 )

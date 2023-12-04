@@ -18,7 +18,7 @@ export async function createMeal({
 	category: string
 	is_available: boolean
 	store_id: number
-    // may need to change the customizations
+	// may need to change the customizations
 	customizations: string
 }) {
 	const res = await db
@@ -31,7 +31,7 @@ export async function createMeal({
 			category,
 			is_available,
 			store_id,
-            // may need to change the customizations
+			// may need to change the customizations
 			customizations
 		})
 		.returningAll()
@@ -41,29 +41,24 @@ export async function createMeal({
 export async function modifyMeal(
 	store_id: number,
 	obj: {
-        id: number
+		id: number
 		name?: string
 		description?: string
 		price?: number
 		picture?: string
 		category?: string
 		is_available?: boolean
-        // may need to change the customizations
+		// may need to change the customizations
 		customizations?: string
 	}
 ) {
-    // not yet verify the meal is in the store
-    const res = await db
-        .updateTable('meals')
-        .set(obj)
-        .where('id', '=', obj.id)
-        .returningAll()
-        .executeTakeFirstOrThrow()
-    return res
+	// not yet verify the meal is in the store
+	const res = await db.updateTable('meals').set(obj).where('id', '=', obj.id).returningAll().executeTakeFirstOrThrow()
+	return res
 }
 export async function getAllMeals() {
 	return await db.selectFrom('meals').selectAll().execute()
 }
-export async function getMealById(id: number){
-    return await db.selectFrom('meals').selectAll().where('id', '=', id).executeTakeFirstOrThrow()
+export async function getMealById(id: number) {
+	return await db.selectFrom('meals').selectAll().where('id', '=', id).executeTakeFirstOrThrow()
 }

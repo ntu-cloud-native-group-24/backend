@@ -42,7 +42,7 @@ export async function initSwagger(app: FastifyInstance) {
 				{ name: 'store', description: 'Store related end-points' },
 				{ name: 'user', description: 'User related end-points' },
 				{ name: 'code', description: 'Code related end-points' },
-				{ name: 'meal', description: 'Meal related end-points'}
+				{ name: 'meal', description: 'Meal related end-points' }
 			],
 			// definitions: {
 			// 	User: {
