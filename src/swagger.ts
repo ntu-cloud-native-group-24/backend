@@ -8,7 +8,8 @@ import {
 	StoreWithoutIdDef,
 	PartialStoreWithoutIdDef,
 	PrivilegeTypeDef,
-	UserDef
+	UserDef,
+	MealDef
 } from './schema'
 
 export async function initSwagger(app: FastifyInstance) {
@@ -19,6 +20,7 @@ export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(PartialStoreWithoutIdDef)
 	app.addSchema(PrivilegeTypeDef)
 	app.addSchema(UserDef)
+	app.addSchema(MealDef)
 	await app.register(fastifySwagger, {
 		swagger: {
 			info: {
@@ -39,7 +41,8 @@ export async function initSwagger(app: FastifyInstance) {
 				{ name: 'misc', description: 'Miscellaneous end-points' },
 				{ name: 'store', description: 'Store related end-points' },
 				{ name: 'user', description: 'User related end-points' },
-				{ name: 'code', description: 'Code related end-points' }
+				{ name: 'code', description: 'Code related end-points' },
+				{ name: 'meal', description: 'Meal related end-points'}
 			],
 			// definitions: {
 			// 	User: {

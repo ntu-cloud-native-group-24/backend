@@ -94,3 +94,19 @@ export const UserDef = Type.Object(
 )
 export const UserTypeRef = Type.Ref(UserDef)
 export type UserType = Static<typeof UserDef>
+
+export const MealDef = Type.Object(
+	{
+		id: Type.Number(),
+		name: Type.String(),
+		description: Type.String(),
+		price: Type.Number(),
+		picture: Type.String(),
+		category: Type.String(),
+		is_available: Type.Boolean(),
+		customizations: Type.Object({}),
+	},
+	{ $id: 'Meal' }
+)
+export const MealTypeRef = Type.Ref(MealDef)
+export type MealType = Static<typeof MealDef>
