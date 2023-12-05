@@ -69,10 +69,13 @@ export interface Orders {
 export interface Stores {
 	address: string
 	description: string
+	email: string
 	id: Generated<number>
 	name: string
 	owner_id: number
+	phone: string
 	picture_url: string
+	status: Generated<boolean>
 }
 
 export interface StoresOpeningHours {

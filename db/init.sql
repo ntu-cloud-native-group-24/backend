@@ -19,7 +19,10 @@ CREATE TABLE
     "name" text NOT NULL,
     "description" text NOT NULL,
     "address" text NOT NULL,
-    "picture_url" text NOT NULL
+    "picture_url" text NOT NULL,
+    "status" boolean NOT NULL DEFAULT false,
+    "phone" text NOT NULL,
+    "email" text NOT NULL
   );
 
 CREATE TABLE
@@ -127,3 +130,5 @@ ALTER TABLE "order_details" ADD FOREIGN KEY ("order_id") REFERENCES "orders" ("i
 ALTER TABLE "order_details" ADD FOREIGN KEY ("meal_id") REFERENCES "meals" ("id");
 
 ALTER TABLE "orders" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "stores_opening_hours" ADD FOREIGN KEY ("store_id") REFERENCES "stores" ("id");

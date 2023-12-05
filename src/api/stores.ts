@@ -111,13 +111,16 @@ export default async function init(app: FastifyInstance) {
 			}
 		},
 		async (req, reply) => {
-			const { name, description, address, picture_url } = req.body
+			const { name, description, address, picture_url, status, phone, email } = req.body
 			const store = await createStore({
 				owner_id: req.user.id,
 				name,
 				description,
 				address,
-				picture_url
+				picture_url,
+				status,
+				phone,
+				email
 			})
 			if (store) {
 				reply.send(success({ store }))
@@ -179,13 +182,16 @@ export default async function init(app: FastifyInstance) {
 			if (store.owner_id !== req.user.id) {
 				return reply.code(400).send(fail('You are not the owner of this store'))
 			}
-			const { name, description, address, picture_url } = req.body
+			const { name, description, address, picture_url, status, phone, email } = req.body
 			const newStore = await modifySrore(req.user.id, {
 				id,
 				name,
 				description,
 				address,
-				picture_url
+				picture_url,
+				status,
+				phone,
+				email
 			})
 			if (newStore) {
 				reply.send(success({ store: newStore }))
@@ -247,13 +253,16 @@ export default async function init(app: FastifyInstance) {
 			if (store.owner_id !== req.user.id) {
 				return reply.code(400).send(fail('You are not the owner of this store'))
 			}
-			const { name, description, address, picture_url } = req.body
+			const { name, description, address, picture_url, status, phone, email } = req.body
 			const newStore = await modifySrore(req.user.id, {
 				id,
 				name,
 				description,
 				address,
-				picture_url
+				picture_url,
+				status,
+				phone,
+				email
 			})
 			if (newStore) {
 				reply.send(success({ store: newStore }))

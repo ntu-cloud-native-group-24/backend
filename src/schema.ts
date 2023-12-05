@@ -59,7 +59,10 @@ export const StoreDef = Type.Object(
 		name: Type.String(),
 		description: Type.String(),
 		address: Type.String(),
-		picture_url: Type.String()
+		picture_url: Type.String(),
+		status: Type.Boolean(),
+		phone: Type.String(),
+		email: Type.String()
 	},
 	{ $id: 'Store' }
 )

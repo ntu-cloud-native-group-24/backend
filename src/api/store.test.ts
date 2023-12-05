@@ -10,10 +10,14 @@ const storeInfo = {
 	name: 'Haachama Cooking',
 	description: 'Haachama Cooking 123',
 	address: 'Tokyo, Japan',
-	picture_url: 'https://www.youtube.com/watch?v=IT186xDTwUU'
+	picture_url: 'https://www.youtube.com/watch?v=IT186xDTwUU',
+	status: false,
+	phone: '7777777777',
+	email: 'akaihaato@example.com'
 }
 const storeInfo2 = {
-	address: 'Australia'
+	address: 'Australia',
+	status: true
 }
 const storeInfo3 = {
 	description: 'Back to Japan',

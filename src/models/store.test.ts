@@ -10,11 +10,15 @@ const storeInfo = {
 	name: 'test',
 	description: 'test',
 	address: 'test',
-	picture_url: 'test'
+	picture_url: 'test',
+	status: false,
+	phone: '+886 1145141919',
+	email: 'abcd@example.com'
 }
 const newStoreInfo = {
 	description: 'new test desc',
-	address: 'new test addr'
+	address: 'new test addr',
+	status: true
 }
 
 beforeAll(async () => {
@@ -76,4 +80,8 @@ test('Modify store as another store manager', async () => {
 			...newStoreInfo
 		})
 	).toBe(null)
+	expect(await getStoreById(store.id)).toEqual({
+		...store,
+		...newStoreInfo
+	})
 })

@@ -9,13 +9,19 @@ export async function createStore({
 	name,
 	description,
 	address,
-	picture_url
+	picture_url,
+	status,
+	phone,
+	email
 }: {
 	owner_id: number
 	name: string
 	description: string
 	address: string
 	picture_url: string
+	status: boolean
+	phone: string
+	email: string
 }) {
 	if (!(await isStoreManager(owner_id))) {
 		return null
@@ -27,7 +33,10 @@ export async function createStore({
 			name,
 			description,
 			address,
-			picture_url
+			picture_url,
+			status,
+			phone,
+			email
 		})
 		.returningAll()
 		.executeTakeFirstOrThrow()
@@ -42,6 +51,9 @@ export async function modifySrore(
 		description?: string
 		address?: string
 		picture_url?: string
+		status?: boolean
+		phone?: string
+		email?: string
 	}
 ) {
 	if (!(await isStoreManager(user_id))) {
