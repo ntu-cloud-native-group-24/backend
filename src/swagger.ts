@@ -7,6 +7,8 @@ import {
 	StoreDef,
 	StoreWithoutIdDef,
 	PartialStoreWithoutIdDef,
+	StoreOpeningHoursDef,
+	StoreOpeningHoursWithoutIdDef,
 	PrivilegeTypeDef,
 	UserDef,
 	MealDef
@@ -18,6 +20,8 @@ export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(StoreDef)
 	app.addSchema(StoreWithoutIdDef)
 	app.addSchema(PartialStoreWithoutIdDef)
+	app.addSchema(StoreOpeningHoursDef)
+	app.addSchema(StoreOpeningHoursWithoutIdDef)
 	app.addSchema(PrivilegeTypeDef)
 	app.addSchema(UserDef)
 	app.addSchema(MealDef)
@@ -40,9 +44,8 @@ export async function initSwagger(app: FastifyInstance) {
 				{ name: 'auth', description: 'Authentication end-points' },
 				{ name: 'misc', description: 'Miscellaneous end-points' },
 				{ name: 'store', description: 'Store related end-points' },
-				{ name: 'user', description: 'User related end-points' },
-				{ name: 'code', description: 'Code related end-points' },
-				{ name: 'meal', description: 'Meal related end-points' }
+				{ name: 'meal', description: 'Meal related end-points' },
+				{ name: 'user', description: 'User related end-points' }
 			],
 			// definitions: {
 			// 	User: {
@@ -68,7 +71,7 @@ export async function initSwagger(app: FastifyInstance) {
 	await app.register(fastifySwaggerUI, {
 		routePrefix: '/docs',
 		uiConfig: {
-			docExpansion: 'full',
+			docExpansion: 'none',
 			deepLinking: false
 		},
 		staticCSP: false,
