@@ -132,3 +132,16 @@ ALTER TABLE "order_details" ADD FOREIGN KEY ("meal_id") REFERENCES "meals" ("id"
 ALTER TABLE "orders" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "stores_opening_hours" ADD FOREIGN KEY ("store_id") REFERENCES "stores" ("id");
+
+INSERT INTO
+  "store_tags" ("name")
+VALUES
+  ('台灣美食'),
+  ('中式美食'),
+  ('日本美食'),
+  ('韓國美食'),
+  ('義大利麵'),
+  ('拉麵'),
+  ('麵食'),
+  ('丼飯'),
+  ('素食');

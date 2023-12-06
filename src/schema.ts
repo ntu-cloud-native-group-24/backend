@@ -99,6 +99,16 @@ export const StoreOpeningHoursWithoutIdDef = Type.Omit(StoreOpeningHoursDef, ['i
 export const StoreOpeningHoursWithoutIdRef = Type.Ref(StoreOpeningHoursWithoutIdDef)
 export type StoreOpeningHoursWithoutIdType = Static<typeof StoreOpeningHoursWithoutIdDef>
 
+export const StoreTagDef = Type.Object(
+	{
+		id: Type.Number(),
+		name: Type.String()
+	},
+	{ $id: 'StoreTag' }
+)
+export const StoreTagRef = Type.Ref(StoreTagDef)
+export type StoreTagType = Static<typeof StoreTagDef>
+
 export const PrivilegeTypeDef = Type.StringLiteralUnion(['consumer', 'store_manager'], {
 	$id: 'PrivilegeType'
 })

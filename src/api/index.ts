@@ -3,6 +3,7 @@ import initHealth from './health'
 import initStore from './stores'
 import initAuth, { initAuthMiddleware } from './auth'
 import initMeal from './meals'
+import initTags from './tags'
 
 export default async function init(app: FastifyInstance) {
 	initAuthMiddleware(app)
@@ -10,4 +11,5 @@ export default async function init(app: FastifyInstance) {
 	initStore(app)
 	initAuth(app)
 	initMeal(app)
+	initTags(app)
 }
