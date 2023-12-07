@@ -88,7 +88,7 @@ test("Consumer can't create store", async () => {
 		},
 		payload: storeInfo
 	})
-	expect(response.statusCode).toBe(400)
+	expect(response.statusCode).toBe(401)
 	expect(response.json()).toMatchObject({ success: false })
 })
 test('Modify store with PUT', async () => {
@@ -153,7 +153,7 @@ test('Consumer can not modify store', async () => {
 		},
 		payload: storeInfo3
 	})
-	expect(response.statusCode).toBe(400)
+	expect(response.statusCode).toBe(401)
 	expect(response.json()).toMatchObject({ success: false })
 })
 test('Non-owner can not modify store', async () => {

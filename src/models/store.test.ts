@@ -44,43 +44,13 @@ test('Create store', async () => {
 		...storeInfo
 	})
 })
-
-test('Create store as consumer', async () => {
-	const store = await createStore({
-		owner_id: consumer,
-		...storeInfo
-	})
-	expect(store).toBe(null)
-})
-
 test('Modify store', async () => {
 	expect(
-		await modifySrore(store_manager, {
+		await modifySrore({
 			id: store.id,
 			...newStoreInfo
 		})
 	).toEqual({ ...store, ...newStoreInfo })
-	expect(await getStoreById(store.id)).toEqual({
-		...store,
-		...newStoreInfo
-	})
-})
-test('Modify store as consumer', async () => {
-	expect(
-		await modifySrore(consumer, {
-			id: store.id,
-			...newStoreInfo
-		})
-	).toBe(null)
-})
-test('Modify store as another store manager', async () => {
-	const store_manager2 = await createUserOfPrivilegeAndReturnUID('store_manager')
-	expect(
-		await modifySrore(store_manager2, {
-			id: store.id,
-			...newStoreInfo
-		})
-	).toBe(null)
 	expect(await getStoreById(store.id)).toEqual({
 		...store,
 		...newStoreInfo

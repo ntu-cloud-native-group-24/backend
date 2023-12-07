@@ -23,9 +23,6 @@ export async function createStore({
 	phone: string
 	email: string
 }) {
-	if (!(await isStoreManager(owner_id))) {
-		return null
-	}
 	const res = await db
 		.insertInto('stores')
 		.values({
@@ -42,26 +39,17 @@ export async function createStore({
 		.executeTakeFirstOrThrow()
 	return res
 }
-export async function modifySrore(
-	user_id: number,
-	obj: {
-		id: number
-		owner_id?: number
-		name?: string
-		description?: string
-		address?: string
-		picture_url?: string
-		status?: boolean
-		phone?: string
-		email?: string
-	}
-) {
-	if (!(await isStoreManager(user_id))) {
-		return null
-	}
-	if ((await getStoreById(obj.id))?.owner_id !== user_id) {
-		return null
-	}
+export async function modifySrore(obj: {
+	id: number
+	owner_id?: number
+	name?: string
+	description?: string
+	address?: string
+	picture_url?: string
+	status?: boolean
+	phone?: string
+	email?: string
+}) {
 	const res = await db
 		.updateTable('stores')
 		.set(obj)

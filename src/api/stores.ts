@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import {
 	success,
 	fail,
@@ -10,7 +10,16 @@ import {
 	PartialStoreWithoutIdType
 } from '../schema'
 import { loginRequired } from './auth'
-import { getAllStores, getStoreById, createStore, modifySrore } from '../models/store'
+import { isStoreManager, getAllStores, getStoreById, createStore, modifySrore } from '../models/store'
+
+export async function storeManagerRequired(request: FastifyRequest, reply: FastifyReply, done: (err?: Error) => void) {
+	loginRequired(request, reply, done)
+	if (!(await isStoreManager(request.user.id))) {
+		reply.code(401).send(fail('Unauthorized'))
+		done(new Error('Unauthorized'))
+		return
+	}
+}
 
 export default async function init(app: FastifyInstance) {
 	app.get(
@@ -82,7 +91,7 @@ export default async function init(app: FastifyInstance) {
 	}>(
 		'/store',
 		{
-			preHandler: loginRequired,
+			preHandler: storeManagerRequired,
 			schema: {
 				body: StoreWithoutIdTypeRef,
 				description: 'Create a new store',
@@ -182,7 +191,7 @@ export default async function init(app: FastifyInstance) {
 				return reply.code(400).send(fail('You are not the owner of this store'))
 			}
 			const { name, description, address, picture_url, status, phone, email } = req.body
-			const newStore = await modifySrore(req.user.id, {
+			const newStore = await modifySrore({
 				id,
 				name,
 				description,
@@ -205,7 +214,7 @@ export default async function init(app: FastifyInstance) {
 	}>(
 		'/store/:id',
 		{
-			preHandler: loginRequired,
+			preHandler: storeManagerRequired,
 			schema: {
 				body: PartialStoreWithoutIdTypeRef,
 				params: {
@@ -253,7 +262,7 @@ export default async function init(app: FastifyInstance) {
 				return reply.code(400).send(fail('You are not the owner of this store'))
 			}
 			const { name, description, address, picture_url, status, phone, email } = req.body
-			const newStore = await modifySrore(req.user.id, {
+			const newStore = await modifySrore({
 				id,
 				name,
 				description,

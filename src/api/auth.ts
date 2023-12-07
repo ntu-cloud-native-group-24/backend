@@ -38,9 +38,10 @@ export async function initAuthMiddleware(app: FastifyInstance) {
 	})
 }
 
-export async function loginRequired(request: FastifyRequest, reply: FastifyReply) {
+export async function loginRequired(request: FastifyRequest, reply: FastifyReply, done: (err?: Error) => void) {
 	if (!request.user) {
 		reply.code(401).send(fail('Unauthorized'))
+		done(new Error('Unauthorized'))
 		return
 	}
 }
