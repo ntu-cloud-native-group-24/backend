@@ -17,10 +17,12 @@ const storeInfo = {
 	email: 'akaihaato@example.com'
 }
 const storeInfo2 = {
+	...storeInfo,
 	address: 'Australia',
 	status: true
 }
 const storeInfo3 = {
+	...storeInfo,
 	description: 'Back to Japan',
 	address: 'Tokyo, Japan'
 }
@@ -114,39 +116,21 @@ test('Modify store with PUT', async () => {
 	})
 })
 test('Modify store with PUT (incomplete info)', async () => {
+	const tmp = { ...storeInfo2 }
+	delete (tmp as any).address
 	const response = await app.inject({
 		method: 'PUT',
 		url: `/api/store/${store.id}`,
 		headers: {
 			'X-API-KEY': storeManager
 		},
-		payload: storeInfo2
+		payload: tmp
 	})
 	expect(response.statusCode).toBe(400)
 })
-test('Modify store with PATCH', async () => {
-	const response = await app.inject({
-		method: 'PATCH',
-		url: `/api/store/${store.id}`,
-		headers: {
-			'X-API-KEY': storeManager
-		},
-		payload: storeInfo3
-	})
-	expect(response.statusCode).toBe(200)
-	expect(response.json()).toMatchObject({
-		success: true,
-		store: {
-			id: store.id,
-			...storeInfo,
-			...storeInfo2,
-			...storeInfo3
-		}
-	})
-})
 test('Consumer can not modify store', async () => {
 	const response = await app.inject({
-		method: 'PATCH',
+		method: 'PUT',
 		url: `/api/store/${store.id}`,
 		headers: {
 			'X-API-KEY': consumer
@@ -159,7 +143,7 @@ test('Consumer can not modify store', async () => {
 test('Non-owner can not modify store', async () => {
 	const storeManager2 = await createUserOfPrivilegeAndReturnToken(app, 'store_manager')
 	const response = await app.inject({
-		method: 'PATCH',
+		method: 'PUT',
 		url: `/api/store/${store.id}`,
 		headers: {
 			'X-API-KEY': storeManager2

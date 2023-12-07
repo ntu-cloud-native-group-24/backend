@@ -17,6 +17,7 @@ const storeInfo = {
 	email: 'abcd@example.com'
 }
 const newStoreInfo = {
+	...storeInfo,
 	description: 'new test desc',
 	address: 'new test addr',
 	status: true

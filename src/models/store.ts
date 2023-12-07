@@ -41,14 +41,13 @@ export async function createStore({
 }
 export async function modifySrore(obj: {
 	id: number
-	owner_id?: number
-	name?: string
-	description?: string
-	address?: string
-	picture_url?: string
-	status?: boolean
-	phone?: string
-	email?: string
+	name: string
+	description: string
+	address: string
+	picture_url: string
+	status: boolean
+	phone: string
+	email: string
 }) {
 	const res = await db
 		.updateTable('stores')

@@ -5,9 +5,7 @@ import {
 	wrapSuccessOrNotSchema,
 	StoreTypeRef,
 	StoreWithoutIdTypeRef,
-	StoreWithoutIdType,
-	PartialStoreWithoutIdTypeRef,
-	PartialStoreWithoutIdType
+	StoreWithoutIdType
 } from '../schema'
 import { loginRequired } from './auth'
 import { isStoreManager, getAllStores, getStoreById, createStore, modifySrore } from '../models/store'
@@ -143,80 +141,9 @@ export default async function init(app: FastifyInstance) {
 	}>(
 		'/store/:id',
 		{
-			preHandler: loginRequired,
-			schema: {
-				body: StoreWithoutIdTypeRef,
-				params: {
-					type: 'object',
-					properties: {
-						id: { type: 'number' }
-					}
-				},
-				description: 'Modify store by id',
-				tags: ['store'],
-				summary: 'Modify store by id',
-				response: {
-					200: {
-						description: 'Successful response',
-						type: 'object',
-						properties: wrapSuccessOrNotSchema({
-							store: StoreTypeRef
-						})
-					},
-					400: {
-						description: 'Bad request',
-						type: 'object',
-						properties: wrapSuccessOrNotSchema({})
-					},
-					404: {
-						description: 'Not found',
-						type: 'object',
-						properties: wrapSuccessOrNotSchema({})
-					}
-				},
-				security: [
-					{
-						apiKey: []
-					}
-				]
-			}
-		},
-		async (req, reply) => {
-			const { id } = req.params
-			const store = await getStoreById(id)
-			if (!store) {
-				return reply.code(404).send(fail('Store not found'))
-			}
-			if (store.owner_id !== req.user.id) {
-				return reply.code(400).send(fail('You are not the owner of this store'))
-			}
-			const { name, description, address, picture_url, status, phone, email } = req.body
-			const newStore = await modifySrore({
-				id,
-				name,
-				description,
-				address,
-				picture_url,
-				status,
-				phone,
-				email
-			})
-			if (newStore) {
-				reply.send(success({ store: newStore }))
-			} else {
-				reply.code(400).send(fail('Unable to modify store'))
-			}
-		}
-	)
-	app.patch<{
-		Params: { id: number }
-		Body: PartialStoreWithoutIdType
-	}>(
-		'/store/:id',
-		{
 			preHandler: storeManagerRequired,
 			schema: {
-				body: PartialStoreWithoutIdTypeRef,
+				body: StoreWithoutIdTypeRef,
 				params: {
 					type: 'object',
 					properties: {
