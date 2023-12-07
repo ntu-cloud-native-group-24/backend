@@ -7,7 +7,7 @@ import {
 	StoreOpeningHoursWithoutIdRef,
 	StoreOpeningHoursWithoutIdType
 } from '../schema'
-import { loginRequired } from './auth'
+import { storeManagerRequired } from './stores'
 import { getStoreById } from '../models/store'
 import { addOpeningHours, getOpeningHoursByStoreId, deleteOpeningHours } from '../models/hours'
 
@@ -63,7 +63,7 @@ export default async function init(app: FastifyInstance) {
 	}>(
 		'/store/:id/hours',
 		{
-			preHandler: loginRequired,
+			preHandler: storeManagerRequired,
 			schema: {
 				body: StoreOpeningHoursWithoutIdRef,
 				params: {
@@ -128,7 +128,7 @@ export default async function init(app: FastifyInstance) {
 	}>(
 		'/store/:id/hours/:hour_id',
 		{
-			preHandler: loginRequired,
+			preHandler: storeManagerRequired,
 			schema: {
 				params: {
 					type: 'object',

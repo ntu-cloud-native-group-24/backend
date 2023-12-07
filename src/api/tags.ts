@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { getAllTags } from '../models/tags'
 import { success, fail, wrapSuccessOrNotSchema, StoreTagRef } from '../schema'
-import { loginRequired } from './auth'
+import { storeManagerRequired } from './stores'
 import { getStoreById } from '../models/store'
 import { addTagToStore, removeTagFromStore, getTagsOfStore } from '../models/tags'
 
@@ -82,7 +82,7 @@ export default async function init(app: FastifyInstance) {
 	}>(
 		'/store/:id/tags',
 		{
-			preHandler: loginRequired,
+			preHandler: storeManagerRequired,
 			schema: {
 				body: {
 					type: 'object',
@@ -146,7 +146,7 @@ export default async function init(app: FastifyInstance) {
 	}>(
 		'/store/:id/tags/:tag_id',
 		{
-			preHandler: loginRequired,
+			preHandler: storeManagerRequired,
 			schema: {
 				params: {
 					type: 'object',
