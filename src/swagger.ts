@@ -9,6 +9,7 @@ import {
 	StoreOpeningHoursDef,
 	StoreOpeningHoursWithoutIdDef,
 	StoreTagDef,
+	StoreCategoryDef,
 	PrivilegeTypeDef,
 	UserDef,
 	MealDef
@@ -22,6 +23,7 @@ export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(StoreOpeningHoursDef)
 	app.addSchema(StoreOpeningHoursWithoutIdDef)
 	app.addSchema(StoreTagDef)
+	app.addSchema(StoreCategoryDef)
 	app.addSchema(PrivilegeTypeDef)
 	app.addSchema(UserDef)
 	app.addSchema(MealDef)
