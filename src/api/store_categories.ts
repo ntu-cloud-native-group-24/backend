@@ -16,7 +16,7 @@ export default async function init(app: FastifyInstance) {
 		{
 			schema: {
 				description: 'Get categories by store id',
-				tags: ['store'],
+				tags: ['store', 'categories'],
 				summary: 'Get all the id and name of categories',
 				response: {
 					200: {
@@ -52,7 +52,7 @@ export default async function init(app: FastifyInstance) {
 			preHandler: storeManagerRequired,
 			schema: {
 				description: 'Create category by store id',
-				tags: ['store'],
+				tags: ['store', 'categories'],
 				summary: 'Create a new category',
 				body: {
 					type: 'object',

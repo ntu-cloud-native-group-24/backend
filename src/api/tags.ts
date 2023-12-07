@@ -44,7 +44,7 @@ export default async function init(app: FastifyInstance) {
 					}
 				},
 				description: 'Get store tags by id',
-				tags: ['store'],
+				tags: ['store', 'tags'],
 				summary: 'Get store tags by id',
 				response: {
 					200: {
@@ -97,7 +97,7 @@ export default async function init(app: FastifyInstance) {
 					}
 				},
 				description: 'Add store tag by id',
-				tags: ['store'],
+				tags: ['store', 'tags'],
 				summary: 'Add store tag by id',
 				response: {
 					200: {

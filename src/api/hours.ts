@@ -25,7 +25,7 @@ export default async function init(app: FastifyInstance) {
 					}
 				},
 				description: 'Get store opening hours by id',
-				tags: ['store'],
+				tags: ['store', 'hours'],
 				summary: 'Get store opening hours by id',
 				response: {
 					200: {
@@ -73,7 +73,7 @@ export default async function init(app: FastifyInstance) {
 					}
 				},
 				description: 'Add store opening hours by id',
-				tags: ['store'],
+				tags: ['store', 'hours'],
 				summary: 'Add store opening hours by id',
 				response: {
 					200: {
@@ -138,7 +138,7 @@ export default async function init(app: FastifyInstance) {
 					}
 				},
 				description: 'Delete store opening hours by id',
-				tags: ['store'],
+				tags: ['store', 'hours'],
 				summary: 'Delete store opening hours by id',
 				response: {
 					200: {
