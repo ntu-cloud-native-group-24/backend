@@ -7,10 +7,7 @@ import {
 	modifySrore,
 	addOpeningHours,
 	getOpeningHoursByStoreId,
-	deleteOpeningHours,
-	addTagToStore,
-	removeTagFromStore,
-	getTagsOfStore
+	deleteOpeningHours
 } from './store'
 
 let consumer: number
@@ -126,28 +123,4 @@ test('Add opening hours', async () => {
 test('Delete opening hours', async () => {
 	await deleteOpeningHours(openingHoursResp[0].id)
 	expect(await getOpeningHoursByStoreId(store.id)).toEqual(openingHoursResp.slice(1))
-})
-
-const tag_id = 1
-const bad_tag_id = 0
-test('Add tag to store', async () => {
-	expect(await addTagToStore(store.id, tag_id)).toBe(true)
-	expect(await getTagsOfStore(store.id)).toMatchObject([
-		{
-			id: tag_id,
-			name: expect.any(String)
-		}
-	])
-})
-test('Remove tag from store', async () => {
-	expect(await removeTagFromStore(store.id, tag_id)).toBe(true)
-	expect(await getTagsOfStore(store.id)).toEqual([])
-})
-test('Removing non-existing tag from store', async () => {
-	expect(await removeTagFromStore(store.id, tag_id)).toBe(false)
-	expect(await getTagsOfStore(store.id)).toEqual([])
-})
-test('Adding non-existing tag to store', async () => {
-	expect(await addTagToStore(store.id, bad_tag_id)).toBe(false)
-	expect(await getTagsOfStore(store.id)).toEqual([])
 })

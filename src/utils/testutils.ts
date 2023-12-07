@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { randString } from '../utils'
 import { createUser, getUserIdByUsername } from '../models/user'
+import { createStore } from '../models/store'
 import { PrivilegeType } from '../schema'
 
 export async function createUserOfPrivilegeAndReturnToken(app: FastifyInstance, privilege: string) {
@@ -39,4 +40,19 @@ export async function createUserOfPrivilegeAndReturnUID(privilege: PrivilegeType
 		privilege
 	})
 	return getUserIdByUsername(username) as Promise<number>
+}
+
+export async function createDummyStore() {
+	const store_manager = await createUserOfPrivilegeAndReturnUID('store_manager')
+	const store = await createStore({
+		owner_id: store_manager,
+		name: 'test',
+		description: 'test',
+		address: 'test',
+		picture_url: 'test',
+		status: false,
+		phone: '35353535',
+		email: 'peko@gmail.com'
+	})
+	return store!
 }

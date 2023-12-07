@@ -24,11 +24,9 @@ import {
 	modifySrore,
 	addOpeningHours,
 	getOpeningHoursByStoreId,
-	deleteOpeningHours,
-	addTagToStore,
-	removeTagFromStore,
-	getTagsOfStore
+	deleteOpeningHours
 } from '../models/store'
+import { addTagToStore, removeTagFromStore, getTagsOfStore } from '../models/tags'
 
 export default async function init(app: FastifyInstance) {
 	app.get(
