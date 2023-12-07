@@ -1,12 +1,11 @@
 import { db } from '../db'
-import { Json } from '../db/types'
+import { Json, JsonValue } from '../db/types'
 
 export async function createMeal({
 	name,
 	description,
 	price,
 	picture,
-	category,
 	is_available,
 	store_id,
 	customizations
@@ -15,11 +14,9 @@ export async function createMeal({
 	description: string
 	price: number
 	picture: string
-	category: string
 	is_available: boolean
 	store_id: number
-	// may need to change the customizations
-	customizations: string
+	customizations: JsonValue
 }) {
 	const res = await db
 		.insertInto('meals')
@@ -28,11 +25,9 @@ export async function createMeal({
 			description,
 			price,
 			picture,
-			category,
 			is_available,
 			store_id,
-			// may need to change the customizations
-			customizations
+			customizations: JSON.stringify(customizations)
 		})
 		.returningAll()
 		.executeTakeFirstOrThrow()
@@ -42,23 +37,29 @@ export async function modifyMeal(
 	store_id: number,
 	obj: {
 		id: number
-		name?: string
-		description?: string
-		price?: number
-		picture?: string
-		category?: string
-		is_available?: boolean
-		// may need to change the customizations
-		customizations?: string
+		name: string
+		description: string
+		price: number
+		picture: string
+		category: string
+		is_available: boolean
+		customizations: JsonValue
 	}
 ) {
-	// not yet verify the meal is in the store
-	const res = await db.updateTable('meals').set(obj).where('id', '=', obj.id).returningAll().executeTakeFirstOrThrow()
+	const res = await db
+		.updateTable('meals')
+		.set({
+			...obj,
+			customizations: JSON.stringify(obj.customizations)
+		})
+		.where('id', '=', obj.id)
+		.returningAll()
+		.executeTakeFirstOrThrow()
 	return res
 }
 export async function getAllMeals() {
 	return await db.selectFrom('meals').selectAll().execute()
 }
 export async function getMealById(id: number) {
-	return await db.selectFrom('meals').selectAll().where('id', '=', id).executeTakeFirstOrThrow()
+	return await db.selectFrom('meals').selectAll().where('id', '=', id).executeTakeFirst()
 }

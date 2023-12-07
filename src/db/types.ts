@@ -26,13 +26,12 @@ export type PrivilegeType = 'consumer' | 'store_manager'
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>
 
-export interface MealAssoc {
+export interface MealCategoriesAssoc {
+	category_id: number
 	meal_id: number
-	tag_id: number
 }
 
 export interface Meals {
-	category: string
 	customizations: Json | null
 	description: string | null
 	id: Generated<number>
@@ -41,11 +40,6 @@ export interface Meals {
 	picture: string | null
 	price: number
 	store_id: number
-}
-
-export interface MealTags {
-	id: Generated<number>
-	name: string
 }
 
 export interface OrderDetails {
@@ -64,6 +58,12 @@ export interface Orders {
 	payment_type: PaymentType
 	state: OrderState
 	user_id: number
+}
+
+export interface StoreMealCategories {
+	id: Generated<number>
+	name: string
+	store_id: number
 }
 
 export interface Stores {
@@ -114,11 +114,11 @@ export interface Users {
 }
 
 export interface DB {
-	meal_assoc: MealAssoc
-	meal_tags: MealTags
+	meal_categories_assoc: MealCategoriesAssoc
 	meals: Meals
 	order_details: OrderDetails
 	orders: Orders
+	store_meal_categories: StoreMealCategories
 	store_tags: StoreTags
 	store_tags_assoc: StoreTagsAssoc
 	stores: Stores
