@@ -4,6 +4,7 @@ import initStore from './stores'
 import initAuth, { initAuthMiddleware } from './auth'
 import initMeal from './meals'
 import initTags from './tags'
+import initMealTags from './meal_tags'
 
 export default async function init(app: FastifyInstance) {
 	initAuthMiddleware(app)
@@ -12,4 +13,5 @@ export default async function init(app: FastifyInstance) {
 	initAuth(app)
 	initMeal(app)
 	initTags(app)
+	initMealTags(app)
 }

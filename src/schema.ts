@@ -141,3 +141,13 @@ export const MealDef = Type.Object(
 )
 export const MealTypeRef = Type.Ref(MealDef)
 export type MealType = Static<typeof MealDef>
+
+export const MealTagDef = Type.Object(
+	{
+		id: Type.Number(),
+		name: Type.String()
+	},
+	{ $id: 'MealTag' }
+)
+export const MealTagRef = Type.Ref(MealTagDef)
+export type MealTagType = Static<typeof MealTagDef>
