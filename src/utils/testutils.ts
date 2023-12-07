@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { randString } from '../utils'
-import { createUser, getUserIdByUsername } from '../models/user'
+import { redis } from '../redis'
+import { createUser, getUserIdByUsername, REDIS_TOKEN_PREFIX, REDIS_TOKEN_EXPIRY } from '../models/user'
 import { createStore } from '../models/store'
 import { PrivilegeType } from '../schema'
 
@@ -40,6 +41,12 @@ export async function createUserOfPrivilegeAndReturnUID(privilege: PrivilegeType
 		privilege
 	})
 	return getUserIdByUsername(username) as Promise<number>
+}
+
+export async function getTokenByUserId(id: number) {
+	const token = crypto.getRandomValues(Buffer.alloc(16)).toString('hex')
+	await redis.setex(REDIS_TOKEN_PREFIX + token, REDIS_TOKEN_EXPIRY, id.toString())
+	return token
 }
 
 export async function createDummyStore() {
