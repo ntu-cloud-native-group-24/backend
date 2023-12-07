@@ -17,15 +17,8 @@ import {
 	StoreTagType
 } from '../schema'
 import { loginRequired } from './auth'
-import {
-	getAllStores,
-	getStoreById,
-	createStore,
-	modifySrore,
-	addOpeningHours,
-	getOpeningHoursByStoreId,
-	deleteOpeningHours
-} from '../models/store'
+import { getAllStores, getStoreById, createStore, modifySrore } from '../models/store'
+import { addOpeningHours, getOpeningHoursByStoreId, deleteOpeningHours } from '../models/hours'
 import { addTagToStore, removeTagFromStore, getTagsOfStore } from '../models/tags'
 
 export default async function init(app: FastifyInstance) {
