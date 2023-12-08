@@ -3,6 +3,7 @@ import { randString } from '../utils'
 import { redis } from '../redis'
 import { createUser, getUserIdByUsername, REDIS_TOKEN_PREFIX, REDIS_TOKEN_EXPIRY } from '../models/user'
 import { createStore } from '../models/store'
+import { createStoreCategory } from '../models/store_categories'
 import { PrivilegeType } from '../schema'
 
 export async function createUserOfPrivilegeAndReturnToken(app: FastifyInstance, privilege: string) {
@@ -62,4 +63,13 @@ export async function createDummyStore() {
 		email: 'peko@gmail.com'
 	})
 	return store!
+}
+
+export async function createDummyAndCategory() {
+	const store = await createDummyStore()
+	const category = await createStoreCategory({
+		name: 'noodles',
+		store_id: store.id
+	})
+	return { store, category }
 }

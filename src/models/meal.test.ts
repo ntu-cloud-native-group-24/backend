@@ -1,13 +1,25 @@
 import { getAllTags } from './tags'
 import { expect, test, describe, beforeAll, jest } from '@jest/globals'
-import { createDummyStore } from '../utils/testutils'
-import { createMeal, modifyMeal, deleteMeal, getAllMealsForStore, getMealById } from './meal'
+import { createDummyAndCategory } from '../utils/testutils'
+import {
+	createMeal,
+	modifyMeal,
+	deleteMeal,
+	getAllMealsForStore,
+	getMealById,
+	addCategoryToMeal,
+	removeCategoryFromMeal,
+	getCategoriesOfMeal
+} from './meal'
 
 let store: any
+let category: any
 let mealObj: any
 
 beforeAll(async () => {
-	store = await createDummyStore()
+	const obj = await createDummyAndCategory()
+	store = obj.store
+	category = obj.category
 })
 
 const meal = {
@@ -58,9 +70,34 @@ test('modifyMeal', async () => {
 	expect(await getMealById(mealObj.id)).toEqual({ ...mealObj, is_available: true })
 })
 
+test('Add category to meal', async () => {
+	const res = await addCategoryToMeal(mealObj.id, category.id)
+	expect(res).toBe(true)
+	expect(await getCategoriesOfMeal(mealObj.id)).toContainEqual({
+		name: category.name,
+		id: category.id
+	})
+})
+
+test('Remove category from meal', async () => {
+	const res = await removeCategoryFromMeal(mealObj.id, category.id)
+	expect(res).toBe(true)
+	expect(await getCategoriesOfMeal(mealObj.id)).not.toContainEqual({
+		name: category.name,
+		id: category.id
+	})
+})
+
 test('Delete meal', async () => {
 	const res = await deleteMeal(mealObj.id)
 	expect(res).toBe(true)
 	expect(await getMealById(mealObj.id)).toBeUndefined()
 	expect(await deleteMeal(mealObj.id)).toBe(false)
+})
+
+test('Delete meal with category works', async () => {
+	const mealObj = await createMeal({ ...meal, store_id: store.id })
+	await addCategoryToMeal(mealObj.id, category.id)
+	const res = await deleteMeal(mealObj.id)
+	expect(res).toBe(true)
 })
