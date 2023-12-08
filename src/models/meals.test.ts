@@ -10,7 +10,7 @@ import {
 	addCategoryToMeal,
 	removeCategoryFromMeal,
 	getCategoriesOfMeal
-} from './meal'
+} from './meals'
 
 let store: any
 let category: any

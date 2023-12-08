@@ -19,7 +19,7 @@ import {
 	addCategoryToMeal,
 	getCategoriesOfMeal,
 	removeCategoryFromMeal
-} from '../models/meal'
+} from '../models/meals'
 import { storeManagerRequired } from './stores'
 import { getStoreById } from '../models/store'
 import { getStoreCategoryByStoreAndId } from '../models/store_categories'
