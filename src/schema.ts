@@ -155,3 +155,13 @@ export const MealWithoutIdDef = Type.Omit(MealDef, ['id'], {
 })
 export const MealWithoutIdRef = Type.Ref(MealWithoutIdDef)
 export type MealWithoutIdType = Static<typeof MealWithoutIdDef>
+
+export const MealCategoryDef = Type.Object(
+	{
+		id: Type.Number(),
+		name: Type.String()
+	},
+	{ $id: 'MealCategory' }
+)
+export const MealCategoryRef = Type.Ref(MealCategoryDef)
+export type MealCategoryType = Static<typeof MealCategoryDef>

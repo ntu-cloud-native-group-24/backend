@@ -13,7 +13,8 @@ import {
 	PrivilegeTypeDef,
 	UserDef,
 	MealDef,
-	MealWithoutIdDef
+	MealWithoutIdDef,
+	MealCategoryDef
 } from './schema'
 
 export async function initSwagger(app: FastifyInstance) {
@@ -29,6 +30,7 @@ export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(UserDef)
 	app.addSchema(MealDef)
 	app.addSchema(MealWithoutIdDef)
+	app.addSchema(MealCategoryDef)
 	await app.register(fastifySwagger, {
 		swagger: {
 			info: {
