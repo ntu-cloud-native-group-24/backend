@@ -40,7 +40,6 @@ export async function modifyMeal(
 		description: string
 		price: number
 		picture: string
-		category: string
 		is_available: boolean
 		customizations: JsonValue
 	}

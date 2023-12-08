@@ -1,69 +1,202 @@
 import { FastifyInstance } from 'fastify'
-import { success, fail, wrapSuccessOrNotSchema, MealTypeRef, MealType } from '../schema'
-import { getMealById } from '../models/meal'
+import {
+	success,
+	fail,
+	wrapSuccessOrNotSchema,
+	MealTypeRef,
+	MealType,
+	MealWithoutIdRef,
+	MealWithoutIdType
+} from '../schema'
+import { createMeal, modifyMeal, deleteMeal, getMealById, getAllMealsForStore } from '../models/meal'
+import { storeManagerRequired } from './stores'
+import { getStoreById } from '../models/store'
+
 export default async function init(app: FastifyInstance) {
-	// app.get(
-	// 	'/meal',
-	// 	{
-	// 		schema: {
-	// 			description: 'Get all meals',
-	// 			tags: ['meal'],
-	// 			summary: 'Get all meals',
-	// 			response: {
-	// 				200: wrapSuccessOrNotSchema({
-	// 					meals: { type: 'array', items: MealTypeRef }
-	// 				})
-	// 			},
-	// 			security: [
-	// 				{
-	// 					apiKey: []
-	// 				}
-	// 			]
-	// 		}
-	// 	},
-	// 	async (req, reply) => {
-	// 		reply.send(
-	// 			success({
-	// 				meals: await getAllMeals()
-	// 			})
-	// 		)
-	// 	}
-	// )
-	// app.get<{
-	// 	Params: { id: number }
-	// }>(
-	// 	'/meal/:id',
-	// 	{
-	// 		schema: {
-	// 			description: 'Get meal by id',
-	// 			tags: ['meal'],
-	// 			summary: 'Get meal by id',
-	// 			params: {
-	// 				type: 'object',
-	// 				properties: {
-	// 					id: { type: 'number' }
-	// 				}
-	// 			},
-	// 			response: {
-	// 				200: wrapSuccessOrNotSchema({
-	// 					meal: MealTypeRef
-	// 				}),
-	// 				404: wrapSuccessOrNotSchema({})
-	// 			},
-	// 			security: [
-	// 				{
-	// 					apiKey: []
-	// 				}
-	// 			]
-	// 		}
-	// 	},
-	// 	async (req, reply) => {
-	// 		const { id } = req.params
-	// 		const meal = await getMealById(id)
-	// 		if (!meal) {
-	// 			return reply.code(404).send(fail())
-	// 		}
-	// 		reply.send(success({ meal }))
-	// 	}
-	// )
+	app.get<{
+		Params: { store_id: number }
+	}>(
+		'/store/:store_id/meals',
+		{
+			schema: {
+				description: 'Get meals by store id',
+				tags: ['store', 'meals'],
+				summary: 'Get all the id and name of meals',
+				response: {
+					200: {
+						description: 'Successful response',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({
+							meals: {
+								type: 'array',
+								items: MealTypeRef
+							}
+						})
+					}
+				}
+			}
+		},
+		async (req, reply) => {
+			const { store_id } = req.params
+			const store = await getStoreById(store_id)
+			if (!store) {
+				return reply.code(404).send(fail('Store not found'))
+			}
+			reply.send(success({ meals: await getAllMealsForStore(store_id) }))
+		}
+	)
+	app.get<{
+		Params: { store_id: number; meal_id: number }
+	}>(
+		'/store/:store_id/meals/:meal_id',
+		{
+			schema: {
+				description: 'Get meals by store id',
+				tags: ['store', 'meals'],
+				summary: 'Get all the id and name of meals',
+				response: {
+					200: {
+						description: 'Successful response',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({
+							meal: MealTypeRef
+						})
+					},
+					404: {
+						description: 'Store or meal not found',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					}
+				}
+			}
+		},
+		async (req, reply) => {
+			const { store_id, meal_id } = req.params
+			const store = await getStoreById(store_id)
+			if (!store) {
+				return reply.code(404).send(fail('Store not found'))
+			}
+			const meal = await getMealById(meal_id)
+			if (!meal) {
+				return reply.code(404).send(fail('Meal not found'))
+			}
+			reply.send(success({ meal }))
+		}
+	)
+	app.post<{
+		Params: { store_id: number }
+		Body: MealWithoutIdType
+	}>(
+		'/store/:store_id/meals',
+		{
+			preHandler: storeManagerRequired,
+			schema: {
+				description: 'Create meal',
+				tags: ['store', 'meals'],
+				summary: 'Create meal',
+				body: MealWithoutIdRef,
+				response: {
+					200: {
+						description: 'Successful response',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({
+							meal: MealTypeRef
+						})
+					},
+					404: {
+						description: 'Store not found',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					}
+				}
+			}
+		},
+		async (req, reply) => {
+			const { store_id } = req.params
+			const store = await getStoreById(store_id)
+			if (!store) {
+				return reply.code(404).send(fail('Store not found'))
+			}
+			const meal = await createMeal({ ...req.body, store_id })
+			reply.send(success({ meal }))
+		}
+	)
+	app.put<{
+		Params: { store_id: number; meal_id: number }
+		Body: MealType
+	}>(
+		'/store/:store_id/meals/:meal_id',
+		{
+			preHandler: storeManagerRequired,
+			schema: {
+				description: 'Modify meal',
+				tags: ['store', 'meals'],
+				summary: 'Modify meal',
+				body: MealTypeRef,
+				response: {
+					200: {
+						description: 'Successful response',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({
+							meal: MealTypeRef
+						})
+					},
+					404: {
+						description: 'Store or meal not found',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					}
+				}
+			}
+		},
+		async (req, reply) => {
+			const { store_id, meal_id } = req.params
+			const store = await getStoreById(store_id)
+			if (!store) {
+				return reply.code(404).send(fail('Store not found'))
+			}
+			if (!(await getMealById(meal_id))) {
+				return reply.code(404).send(fail('Meal not found'))
+			}
+			const meal = await modifyMeal(meal_id, req.body)
+			reply.send(success({ meal }))
+		}
+	)
+	app.delete<{
+		Params: { store_id: number; meal_id: number }
+	}>(
+		'/store/:store_id/meals/:meal_id',
+		{
+			preHandler: storeManagerRequired,
+			schema: {
+				description: 'Delete meal',
+				tags: ['store', 'meals'],
+				summary: 'Delete meal',
+				response: {
+					200: {
+						description: 'Successful response',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					},
+					404: {
+						description: 'Store or meal not found',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					}
+				}
+			}
+		},
+		async (req, reply) => {
+			const { store_id, meal_id } = req.params
+			const store = await getStoreById(store_id)
+			if (!store) {
+				return reply.code(404).send(fail('Store not found'))
+			}
+			if (!(await getMealById(meal_id))) {
+				return reply.code(404).send(fail('Meal not found'))
+			}
+			await deleteMeal(meal_id)
+			reply.send(success({}))
+		}
+	)
 }
