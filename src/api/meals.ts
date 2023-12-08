@@ -20,7 +20,7 @@ export default async function init(app: FastifyInstance) {
 		{
 			schema: {
 				description: 'Get meals by store id',
-				tags: ['store', 'meals'],
+				tags: ['store', 'meal'],
 				summary: 'Get all the id and name of meals',
 				response: {
 					200: {
@@ -52,7 +52,7 @@ export default async function init(app: FastifyInstance) {
 		{
 			schema: {
 				description: 'Get meals by store id',
-				tags: ['store', 'meals'],
+				tags: ['store', 'meal'],
 				summary: 'Get all the id and name of meals',
 				response: {
 					200: {
@@ -92,7 +92,7 @@ export default async function init(app: FastifyInstance) {
 			preHandler: storeManagerRequired,
 			schema: {
 				description: 'Create meal',
-				tags: ['store', 'meals'],
+				tags: ['store', 'meal'],
 				summary: 'Create meal',
 				body: MealWithoutIdRef,
 				response: {
@@ -130,7 +130,7 @@ export default async function init(app: FastifyInstance) {
 			preHandler: storeManagerRequired,
 			schema: {
 				description: 'Modify meal',
-				tags: ['store', 'meals'],
+				tags: ['store', 'meal'],
 				summary: 'Modify meal',
 				body: MealTypeRef,
 				response: {
@@ -170,7 +170,7 @@ export default async function init(app: FastifyInstance) {
 			preHandler: storeManagerRequired,
 			schema: {
 				description: 'Delete meal',
-				tags: ['store', 'meals'],
+				tags: ['store', 'meal'],
 				summary: 'Delete meal',
 				response: {
 					200: {
