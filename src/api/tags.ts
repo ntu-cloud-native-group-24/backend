@@ -59,12 +59,7 @@ export default async function init(app: FastifyInstance) {
 						type: 'object',
 						properties: wrapSuccessOrNotSchema({})
 					}
-				},
-				security: [
-					{
-						apiKey: []
-					}
-				]
+				}
 			}
 		},
 		async (req, reply) => {

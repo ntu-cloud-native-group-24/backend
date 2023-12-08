@@ -24,12 +24,7 @@ export default async function init(app: FastifyInstance) {
 					200: wrapSuccessOrNotSchema({
 						stores: { type: 'array', items: StoreRef }
 					})
-				},
-				security: [
-					{
-						apiKey: []
-					}
-				]
+				}
 			}
 		},
 		async (req, reply) => {
@@ -60,12 +55,7 @@ export default async function init(app: FastifyInstance) {
 						store: StoreRef
 					}),
 					404: wrapSuccessOrNotSchema({})
-				},
-				security: [
-					{
-						apiKey: []
-					}
-				]
+				}
 			}
 		},
 		async (req, reply) => {

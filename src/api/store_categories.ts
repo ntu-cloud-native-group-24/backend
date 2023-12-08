@@ -69,7 +69,12 @@ export default async function init(app: FastifyInstance) {
 							category: StoreCategoryRef
 						})
 					}
-				}
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
 			}
 		},
 		async (req, reply) => {
