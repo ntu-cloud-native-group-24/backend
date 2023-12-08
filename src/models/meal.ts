@@ -1,5 +1,5 @@
 import { db } from '../db'
-import { Json, JsonValue } from '../db/types'
+import { JsonValue } from '../db/types'
 
 export async function createMeal({
 	name,
@@ -34,9 +34,8 @@ export async function createMeal({
 	return res
 }
 export async function modifyMeal(
-	store_id: number,
+	id: number,
 	obj: {
-		id: number
 		name: string
 		description: string
 		price: number
@@ -52,13 +51,17 @@ export async function modifyMeal(
 			...obj,
 			customizations: JSON.stringify(obj.customizations)
 		})
-		.where('id', '=', obj.id)
+		.where('id', '=', id)
 		.returningAll()
 		.executeTakeFirstOrThrow()
 	return res
 }
-export async function getAllMeals() {
-	return await db.selectFrom('meals').selectAll().execute()
+export async function deleteMeal(id: number) {
+	const { numDeletedRows } = await db.deleteFrom('meals').where('id', '=', id).executeTakeFirstOrThrow()
+	return numDeletedRows > 0n
+}
+export async function getAllMealsForStore(store_id: number) {
+	return await db.selectFrom('meals').where('store_id', '=', store_id).selectAll().execute()
 }
 export async function getMealById(id: number) {
 	return await db.selectFrom('meals').selectAll().where('id', '=', id).executeTakeFirst()

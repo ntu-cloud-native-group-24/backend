@@ -1,0 +1,66 @@
+import { getAllTags } from './tags'
+import { expect, test, describe, beforeAll, jest } from '@jest/globals'
+import { createDummyStore } from '../utils/testutils'
+import { createMeal, modifyMeal, deleteMeal, getAllMealsForStore, getMealById } from './meal'
+
+let store: any
+let mealObj: any
+
+beforeAll(async () => {
+	store = await createDummyStore()
+})
+
+const meal = {
+	name: '牛肉麵',
+	description: '好吃的牛肉麵',
+	price: 120,
+	picture: 'https://example.com/beef-noodle.jpg',
+	is_available: false,
+	customizations: {
+		options: [
+			{
+				type: 'radio',
+				name: '麵條',
+				options: [
+					{
+						name: '細麵',
+						price: 0
+					},
+					{
+						name: '粗麵',
+						price: 20
+					}
+				]
+			}
+		]
+	}
+}
+
+test('createMeal', async () => {
+	const res = await createMeal({ ...meal, store_id: store.id })
+	expect(res).toEqual({ ...meal, store_id: store.id, id: expect.any(Number) })
+	mealObj = res
+})
+
+test('Get all meals for store', async () => {
+	const res = await getAllMealsForStore(store.id)
+	expect(res).toEqual([mealObj])
+})
+
+test('Get meal by id', async () => {
+	const res = await getMealById(mealObj.id)
+	expect(res).toEqual(mealObj)
+})
+
+test('modifyMeal', async () => {
+	const res = await modifyMeal(mealObj.id, { ...mealObj, is_available: true })
+	expect(res).toEqual({ ...mealObj, is_available: true })
+	expect(await getMealById(mealObj.id)).toEqual({ ...mealObj, is_available: true })
+})
+
+test('Delete meal', async () => {
+	const res = await deleteMeal(mealObj.id)
+	expect(res).toBe(true)
+	expect(await getMealById(mealObj.id)).toBeUndefined()
+	expect(await deleteMeal(mealObj.id)).toBe(false)
+})
