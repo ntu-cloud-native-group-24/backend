@@ -12,6 +12,11 @@ import {
 	StoreCategoryDef,
 	PrivilegeTypeDef,
 	UserDef,
+	FoodSelectionItemDef,
+	FoodRadioSelectionGroupDef,
+	FoodCheckboxSelectionGroupDef,
+	FoodSelectionGroupDef,
+	CustomizationsDef,
 	MealDef,
 	MealWithoutIdDef,
 	MealCategoryDef
@@ -28,6 +33,11 @@ export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(StoreCategoryDef)
 	app.addSchema(PrivilegeTypeDef)
 	app.addSchema(UserDef)
+	app.addSchema(FoodSelectionItemDef)
+	app.addSchema(FoodRadioSelectionGroupDef)
+	app.addSchema(FoodCheckboxSelectionGroupDef)
+	app.addSchema(FoodSelectionGroupDef)
+	app.addSchema(CustomizationsDef)
 	app.addSchema(MealDef)
 	app.addSchema(MealWithoutIdDef)
 	app.addSchema(MealCategoryDef)

@@ -21,18 +21,20 @@ const meal = {
 	picture: 'https://example.com/beef-noodle.jpg',
 	is_available: false,
 	customizations: {
-		options: [
+		selectionGroups: [
 			{
 				type: 'radio',
-				name: '麵條',
-				options: [
+				title: '麵條',
+				items: [
 					{
 						name: '細麵',
-						price: 0
+						price: 0,
+						status: false
 					},
 					{
 						name: '粗麵',
-						price: 20
+						price: 10,
+						status: true
 					}
 				]
 			}
