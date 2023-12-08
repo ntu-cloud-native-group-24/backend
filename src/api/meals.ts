@@ -3,7 +3,7 @@ import {
 	success,
 	fail,
 	wrapSuccessOrNotSchema,
-	MealTypeRef,
+	MealRef,
 	MealType,
 	MealWithoutIdRef,
 	MealWithoutIdType
@@ -29,7 +29,7 @@ export default async function init(app: FastifyInstance) {
 						properties: wrapSuccessOrNotSchema({
 							meals: {
 								type: 'array',
-								items: MealTypeRef
+								items: MealRef
 							}
 						})
 					}
@@ -59,7 +59,7 @@ export default async function init(app: FastifyInstance) {
 						description: 'Successful response',
 						type: 'object',
 						properties: wrapSuccessOrNotSchema({
-							meal: MealTypeRef
+							meal: MealRef
 						})
 					},
 					404: {
@@ -100,7 +100,7 @@ export default async function init(app: FastifyInstance) {
 						description: 'Successful response',
 						type: 'object',
 						properties: wrapSuccessOrNotSchema({
-							meal: MealTypeRef
+							meal: MealRef
 						})
 					},
 					404: {
@@ -132,13 +132,13 @@ export default async function init(app: FastifyInstance) {
 				description: 'Modify meal',
 				tags: ['store', 'meal'],
 				summary: 'Modify meal',
-				body: MealTypeRef,
+				body: MealRef,
 				response: {
 					200: {
 						description: 'Successful response',
 						type: 'object',
 						properties: wrapSuccessOrNotSchema({
-							meal: MealTypeRef
+							meal: MealRef
 						})
 					},
 					404: {

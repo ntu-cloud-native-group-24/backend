@@ -1,12 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import {
-	success,
-	fail,
-	wrapSuccessOrNotSchema,
-	StoreTypeRef,
-	StoreWithoutIdTypeRef,
-	StoreWithoutIdType
-} from '../schema'
+import { success, fail, wrapSuccessOrNotSchema, StoreRef, StoreWithoutIdRef, StoreWithoutIdType } from '../schema'
 import { loginRequired } from './auth'
 import { isStoreManager, getAllStores, getStoreById, createStore, modifySrore } from '../models/store'
 
@@ -29,7 +22,7 @@ export default async function init(app: FastifyInstance) {
 				summary: 'Get all stores',
 				response: {
 					200: wrapSuccessOrNotSchema({
-						stores: { type: 'array', items: StoreTypeRef }
+						stores: { type: 'array', items: StoreRef }
 					})
 				},
 				security: [
@@ -64,7 +57,7 @@ export default async function init(app: FastifyInstance) {
 				},
 				response: {
 					200: wrapSuccessOrNotSchema({
-						store: StoreTypeRef
+						store: StoreRef
 					}),
 					404: wrapSuccessOrNotSchema({})
 				},
@@ -91,7 +84,7 @@ export default async function init(app: FastifyInstance) {
 		{
 			preHandler: storeManagerRequired,
 			schema: {
-				body: StoreWithoutIdTypeRef,
+				body: StoreWithoutIdRef,
 				description: 'Create a new store',
 				tags: ['store'],
 				summary: 'Create a new store',
@@ -100,7 +93,7 @@ export default async function init(app: FastifyInstance) {
 						description: 'Successful response',
 						type: 'object',
 						properties: wrapSuccessOrNotSchema({
-							store: StoreTypeRef
+							store: StoreRef
 						})
 					},
 					400: {
@@ -143,7 +136,7 @@ export default async function init(app: FastifyInstance) {
 		{
 			preHandler: storeManagerRequired,
 			schema: {
-				body: StoreWithoutIdTypeRef,
+				body: StoreWithoutIdRef,
 				params: {
 					type: 'object',
 					properties: {
@@ -158,7 +151,7 @@ export default async function init(app: FastifyInstance) {
 						description: 'Successful response',
 						type: 'object',
 						properties: wrapSuccessOrNotSchema({
-							store: StoreTypeRef
+							store: StoreRef
 						})
 					},
 					400: {

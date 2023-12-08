@@ -66,13 +66,13 @@ export const StoreDef = Type.Object(
 	},
 	{ $id: 'Store' }
 )
-export const StoreTypeRef = Type.Ref(StoreDef)
+export const StoreRef = Type.Ref(StoreDef)
 export type StoreType = Static<typeof StoreDef>
 
 export const StoreWithoutIdDef = Type.Omit(StoreDef, ['id'], {
 	$id: 'StoreWithoutId'
 })
-export const StoreWithoutIdTypeRef = Type.Ref(StoreWithoutIdDef)
+export const StoreWithoutIdRef = Type.Ref(StoreWithoutIdDef)
 export type StoreWithoutIdType = Static<typeof StoreWithoutIdDef>
 
 export const StoreOpeningHoursDef = Type.Object(
@@ -133,7 +133,7 @@ export const UserDef = Type.Object(
 	},
 	{ $id: 'User' }
 )
-export const UserTypeRef = Type.Ref(UserDef)
+export const UserRef = Type.Ref(UserDef)
 export type UserType = Static<typeof UserDef>
 
 export const MealDef = Type.Object(
@@ -148,7 +148,7 @@ export const MealDef = Type.Object(
 	},
 	{ $id: 'Meal' }
 )
-export const MealTypeRef = Type.Ref(MealDef)
+export const MealRef = Type.Ref(MealDef)
 export type MealType = Static<typeof MealDef>
 export const MealWithoutIdDef = Type.Omit(MealDef, ['id'], {
 	$id: 'MealWithoutId'
