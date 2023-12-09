@@ -16,6 +16,7 @@ services:
         ports:
             - '6379:6379'
     web:
+        image: mealorder24.azurecr.io/backend:latest
         build:
             context: .
         ports:
