@@ -1,14 +1,19 @@
 import { expect, test, describe, beforeAll, jest } from '@jest/globals'
 import { createUserOfPrivilegeAndReturnUID, createDummyStore } from '../utils/testutils'
 import { createMeal } from './meals'
-import { createOrder, getOrder } from './orders'
+import { createOrder, getOrder, checkedGetOrder } from './orders'
 import { getSelectionGroupsWithData } from './customizations'
 import { CustomizationsType } from '../schema/customizations'
 
 let store: Awaited<ReturnType<typeof createDummyStore>>
 let user_id: Awaited<ReturnType<typeof createUserOfPrivilegeAndReturnUID>>
 let meal: Awaited<ReturnType<typeof createMeal>>
-let meal_from_another_store: Awaited<ReturnType<typeof createMeal>>
+
+let store2: Awaited<ReturnType<typeof createDummyStore>>
+let user_id2: Awaited<ReturnType<typeof createUserOfPrivilegeAndReturnUID>>
+let meal_store2: Awaited<ReturnType<typeof createMeal>>
+
+let orderObj: Awaited<ReturnType<typeof getOrder>>
 
 const mealData = {
 	name: '牛肉麵',
@@ -40,8 +45,9 @@ beforeAll(async () => {
 	store = await createDummyStore()
 	user_id = await createUserOfPrivilegeAndReturnUID('consumer')
 	meal = await createMeal({ ...mealData, store_id: store.id })
-	const another_store = await createDummyStore()
-	meal_from_another_store = await createMeal({ ...mealData, store_id: another_store.id })
+	store2 = await createDummyStore()
+	user_id2 = await createUserOfPrivilegeAndReturnUID('consumer')
+	meal_store2 = await createMeal({ ...mealData, store_id: store2.id })
 })
 
 test('create order', async () => {
@@ -86,6 +92,7 @@ test('create order', async () => {
 			}
 		]
 	})
+	orderObj = order
 })
 test('create order with invalid quantity', async () => {
 	await expect(
@@ -129,7 +136,7 @@ test('create order with meal from another store', async () => {
 			delivery_method: 'pickup',
 			items: [
 				{
-					meal_id: meal_from_another_store.id,
+					meal_id: meal_store2.id,
 					quantity: 2,
 					notes: '不要酸菜',
 					customization_statuses: [false, true]
@@ -150,4 +157,16 @@ test('create order with empty order', async () => {
 })
 test('get non existent order', async () => {
 	expect(await getOrder(-1)).toBeUndefined()
+})
+test('checked get order for original user', async () => {
+	expect(await checkedGetOrder(user_id, orderObj!.id)).toEqual(orderObj)
+})
+test('checked get order for store owner', async () => {
+	expect(await checkedGetOrder(store.owner_id, orderObj!.id)).toEqual(orderObj)
+})
+test('checked get order for other user', async () => {
+	expect(await checkedGetOrder(user_id2, orderObj!.id)).toBeUndefined()
+})
+test('checked get order for another store owner', async () => {
+	expect(await checkedGetOrder(store2.owner_id, orderObj!.id)).toBeUndefined()
 })

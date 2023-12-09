@@ -62,3 +62,17 @@ export async function getOrder(order_id: number) {
 		total_price
 	}
 }
+
+export async function checkedGetOrder(user_id: number, order_id: number) {
+	// only the user who created the order or the store owner can access the order
+	const order = await getOrder(order_id)
+	if (!order) return
+	if (order.user_id === user_id) return order
+	const store = await db
+		.selectFrom('stores')
+		.where('owner_id', '=', user_id)
+		.where('id', '=', order.store_id)
+		.selectAll()
+		.executeTakeFirst()
+	if (store) return order
+}

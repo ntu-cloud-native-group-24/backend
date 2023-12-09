@@ -17,9 +17,18 @@ import {
 	FoodCheckboxSelectionGroupDef,
 	FoodSelectionGroupDef,
 	CustomizationsDef,
+	FoodSelectionItemWithStatusDef,
+	FoodRadioSelectionGroupWithStatusDef,
+	FoodCheckboxSelectionGroupWithStatusDef,
+	FoodSelectionGroupWithStatusDef,
+	CustomizationsWithStatusDef,
 	MealDef,
 	MealWithoutIdDef,
-	MealCategoryDef
+	MealCategoryDef,
+	OrderRequestItemDef,
+	OrderRequestDef,
+	OrderDetailDef,
+	OrderDef
 } from './schema'
 
 export async function initSwagger(app: FastifyInstance) {
@@ -38,9 +47,18 @@ export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(FoodCheckboxSelectionGroupDef)
 	app.addSchema(FoodSelectionGroupDef)
 	app.addSchema(CustomizationsDef)
+	app.addSchema(FoodSelectionItemWithStatusDef)
+	app.addSchema(FoodRadioSelectionGroupWithStatusDef)
+	app.addSchema(FoodCheckboxSelectionGroupWithStatusDef)
+	app.addSchema(FoodSelectionGroupWithStatusDef)
+	app.addSchema(CustomizationsWithStatusDef)
 	app.addSchema(MealDef)
 	app.addSchema(MealWithoutIdDef)
 	app.addSchema(MealCategoryDef)
+	app.addSchema(OrderRequestItemDef)
+	app.addSchema(OrderRequestDef)
+	app.addSchema(OrderDetailDef)
+	app.addSchema(OrderDef)
 	await app.register(fastifySwagger, {
 		swagger: {
 			info: {
