@@ -80,7 +80,8 @@ export async function initSwagger(app: FastifyInstance) {
 				{ name: 'hours', description: 'Opening hours related end-points' },
 				{ name: 'categories', description: 'Store meal categories related end-points' },
 				{ name: 'meal', description: 'Meal related end-points' },
-				{ name: 'tags', description: 'Meal tags related end-points' }
+				{ name: 'tags', description: 'Meal tags related end-points' },
+				{ name: 'order', description: 'Order related end-points' }
 			],
 			securityDefinitions: {
 				apiKey: {
