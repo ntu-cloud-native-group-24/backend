@@ -1,11 +1,40 @@
 import { CustomizationsType } from '../schema'
 
-export function validateCustomizations(customizations: CustomizationsType) {
-	const anyEmptyGroup = customizations.selectionGroups.some(group => group.items.length === 0)
-	if (anyEmptyGroup) {
-		return false
+type SelectionItemWithData = {
+	name: string
+	price: number
+	status: boolean
+}
+
+type SelectionGroupWithData = (
+	| {
+			type: 'radio'
+			title: string
+			items: SelectionItemWithData[]
+	  }
+	| {
+			type: 'checkbox'
+			title: string
+			items: SelectionItemWithData[]
+	  }
+)[]
+
+function populateCustomizationsInplace(customizations: CustomizationsType, statuses: boolean[]) {
+	const numberOfItems = customizations.selectionGroups.reduce((acc, group) => acc + group.items.length, 0)
+	if (statuses.length !== numberOfItems) {
+		throw new Error('Invalid statuses')
 	}
-	const radioGroups = customizations.selectionGroups.filter(group => group.type === 'radio')
+	const selectionGroups = customizations.selectionGroups as SelectionGroupWithData
+	const ar = statuses.slice().reverse()
+	for (const group of selectionGroups) {
+		for (const item of group.items) {
+			item.status = ar.pop()!
+		}
+	}
+}
+
+function validateGroupConstraints(groups: SelectionGroupWithData) {
+	const radioGroups = groups.filter(group => group.type === 'radio')
 	for (const group of radioGroups) {
 		const selectedItems = group.items.filter(item => item.status)
 		if (selectedItems.length !== 1) {
@@ -15,12 +44,16 @@ export function validateCustomizations(customizations: CustomizationsType) {
 	return true
 }
 
-export function calculatePriceOfCustomizations(customizations: CustomizationsType) {
-	if (!validateCustomizations(customizations)) {
+export function calculatePriceOfCustomizations(customizations: CustomizationsType, statuses: boolean[]) {
+	// (typeof customizations.selectionGroups) is a supertype of SelectionGroupWithData
+	// so it is safe to cast
+	const groups = customizations.selectionGroups as SelectionGroupWithData
+	populateCustomizationsInplace(customizations, statuses)
+	if (!validateGroupConstraints(groups)) {
 		throw new Error('Invalid customizations')
 	}
 	let price = 0
-	for (const group of customizations.selectionGroups) {
+	for (const group of groups) {
 		for (const item of group.items) {
 			if (item.status) {
 				price += item.price

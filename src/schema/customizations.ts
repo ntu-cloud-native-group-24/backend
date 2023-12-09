@@ -3,8 +3,7 @@ import { Static, Type } from '../typebox-openapi'
 export const FoodSelectionItemDef = Type.Object(
 	{
 		name: Type.String(),
-		price: Type.Number(),
-		status: Type.Boolean()
+		price: Type.Number()
 	},
 	{ $id: 'FoodSelectionItem' }
 )

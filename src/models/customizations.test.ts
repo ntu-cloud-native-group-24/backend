@@ -7,106 +7,99 @@ const radioGroup1 = {
 	items: [
 		{
 			name: 'item1',
-			price: 10,
-			status: true
+			price: 10
 		},
 		{
 			name: 'item2',
-			price: 20,
-			status: false
+			price: 20
 		}
 	]
 }
-test('test radio group 1', () => {
-	expect(
-		calculatePriceOfCustomizations({
-			selectionGroups: [radioGroup1]
-		})
-	).toBe(10)
-})
-const invalidRadioGroup1 = {
-	type: 'radio' as const,
-	title: 'Choose one',
-	items: [
-		{
-			name: 'item1',
-			price: 10,
-			status: true
-		},
-		{
-			name: 'item2',
-			price: 20,
-			status: true
-		}
-	]
-}
-test('test invalid radio group 1', () => {
-	expect(() =>
-		calculatePriceOfCustomizations({
-			selectionGroups: [invalidRadioGroup1]
-		})
-	).toThrow()
-})
-const invalidRadioGroup2 = {
-	type: 'radio' as const,
-	title: 'Choose one',
-	items: [
-		{
-			name: 'item1',
-			price: 10,
-			status: false
-		},
-		{
-			name: 'item2',
-			price: 20,
-			status: false
-		}
-	]
-}
-test('test invalid radio group 2', () => {
-	expect(() =>
-		calculatePriceOfCustomizations({
-			selectionGroups: [invalidRadioGroup2]
-		})
-	).toThrow()
-})
 const checkboxGroup1 = {
 	type: 'checkbox' as const,
 	title: 'Choose one',
 	items: [
 		{
 			name: 'item1',
-			price: 10,
-			status: true
+			price: 10
 		},
 		{
 			name: 'item2',
-			price: 20,
-			status: true
+			price: 20
 		},
 		{
 			name: 'item3',
-			price: 30,
-			status: false
+			price: 30
 		}
 	]
 }
-test('test checkbox group 1', () => {
+test('radio group with one selection', () => {
 	expect(
-		calculatePriceOfCustomizations({
-			selectionGroups: [checkboxGroup1]
-		})
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [radioGroup1]
+			},
+			[true, false]
+		)
+	).toBe(10)
+})
+test('radio group with two selections (invalid)', () => {
+	expect(() =>
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [radioGroup1]
+			},
+			[true, true]
+		)
+	).toThrow()
+})
+test('radio group with no selections (invalid)', () => {
+	expect(() =>
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [radioGroup1]
+			},
+			[false, false]
+		)
+	).toThrow()
+})
+test('checkbox group two selection', () => {
+	expect(
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [checkboxGroup1]
+			},
+			[true, true, false]
+		)
 	).toBe(30)
 })
-const invalidCheckboxGroup1 = {
-	type: 'checkbox' as const,
-	title: 'Choose one',
-	items: []
-}
-test('test invalid checkbox group 1', () => {
+test('checkbox group with zero selection', () => {
+	expect(
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [checkboxGroup1]
+			},
+			[false, false, false]
+		)
+	).toBe(0)
+})
+test('composed radio and checkbox group', () => {
+	expect(
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [radioGroup1, checkboxGroup1]
+			},
+			[true, false, false, true, true]
+		)
+	).toBe(60)
+})
+test('composed radio and checkbox group (invalid radio)', () => {
 	expect(() =>
-		calculatePriceOfCustomizations({
-			selectionGroups: [invalidCheckboxGroup1]
-		})
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [radioGroup1, checkboxGroup1]
+			},
+			[true, true, false, true, true]
+		)
 	).toThrow()
 })
