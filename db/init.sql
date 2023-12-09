@@ -4,7 +4,7 @@ CREATE TYPE "privilege_type" AS ENUM ('consumer', 'store_manager');
 
 CREATE TYPE "payment_type" AS ENUM ('cash', 'credit_card', 'monthly');
 
-CREATE TYPE "order_state" AS ENUM ('unpaid', 'paid', 'aborted');
+CREATE TYPE "order_state" AS ENUM ('pending', 'preparing', 'done', 'cancelled');
 
 CREATE TYPE "delivery_method" AS ENUM ('delivery', 'pickup');
 

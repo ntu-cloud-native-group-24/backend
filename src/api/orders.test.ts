@@ -100,7 +100,7 @@ test('create order', async () => {
 			notes: '',
 			payment_type: 'cash',
 			delivery_method: 'pickup',
-			state: 'paid',
+			state: 'pending',
 			total_price: 260,
 			details: [
 				{
@@ -296,5 +296,36 @@ test('get order for another store owner', async () => {
 	expect(response.statusCode).toBe(404)
 	expect(response.json()).toMatchObject({
 		success: false
+	})
+})
+test('update order state', async () => {
+	const response = await app.inject({
+		method: 'PATCH',
+		url: `/api/orders/${orderObj!.id}`,
+		headers: {
+			'X-API-KEY': await getTokenByUserId(store.owner_id)
+		},
+		payload: {
+			state: 'preparing'
+		}
+	})
+	expect(response.statusCode).toBe(200)
+	expect(response.json()).toMatchObject({
+		success: true
+	})
+	const response2 = await app.inject({
+		method: 'GET',
+		url: `/api/orders/${orderObj!.id}`,
+		headers: {
+			'X-API-KEY': user_token
+		}
+	})
+	expect(response2.statusCode).toBe(200)
+	expect(response2.json()).toMatchObject({
+		success: true,
+		order: {
+			...orderObj,
+			state: 'preparing'
+		}
 	})
 })

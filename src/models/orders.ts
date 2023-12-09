@@ -2,6 +2,8 @@ import { db } from '../db'
 import { OrderRequestType } from '../schema/orders'
 import { UICustomizationsType } from '../schema/customizations'
 import { getSelectionGroupsWithData, calculatePriceOfSelectionGroupsWithData } from './customizations'
+import { DeliveryMethod, OrderState, PaymentType, PrivilegeType } from '../db/types'
+import { checkUserPrivilege } from './privileges'
 
 export async function createOrder(user_id: number, store_id: number, order: OrderRequestType) {
 	const orderId = await db.transaction().execute(async tx => {
@@ -23,7 +25,7 @@ export async function createOrder(user_id: number, store_id: number, order: Orde
 				notes: order.notes,
 				payment_type: order.payment_type,
 				delivery_method: order.delivery_method,
-				state: 'paid' // we don't have a payment system yet
+				state: 'pending' // we don't have a payment system yet
 			})
 			.returningAll()
 			.executeTakeFirstOrThrow()
@@ -75,4 +77,41 @@ export async function checkedGetOrder(user_id: number, order_id: number) {
 		.selectAll()
 		.executeTakeFirst()
 	if (store) return order
+}
+
+type OrderStateTransitionTable = Record<OrderState, OrderState[]>
+const VALID_STATE_TRANSITIONS_FOR_STORE_MANAGER: OrderStateTransitionTable = {
+	pending: ['preparing', 'cancelled'],
+	preparing: ['done', 'cancelled'],
+	done: [],
+	cancelled: []
+}
+const VALID_STATE_TRANSITIONS_FOR_CONSUMER: OrderStateTransitionTable = {
+	pending: ['cancelled'],
+	preparing: [],
+	done: [],
+	cancelled: []
+}
+const VALID_STATE_TRANSITIONS: Record<PrivilegeType, OrderStateTransitionTable> = {
+	consumer: VALID_STATE_TRANSITIONS_FOR_CONSUMER,
+	store_manager: VALID_STATE_TRANSITIONS_FOR_STORE_MANAGER
+}
+
+export async function updateOrderStateOrThrow(user_id: number, order_id: number, newState: OrderState) {
+	const { state } = await db.selectFrom('orders').where('id', '=', order_id).select('state').executeTakeFirstOrThrow()
+	for (const privilege of ['consumer', 'store_manager'] as const) {
+		if (await checkUserPrivilege(user_id, privilege)) {
+			if (!VALID_STATE_TRANSITIONS[privilege][state].includes(newState)) {
+				throw new Error('Invalid state transition')
+			}
+			break
+		}
+	}
+	await db
+		.updateTable('orders')
+		.set({
+			state: newState
+		})
+		.where('id', '=', order_id)
+		.execute()
 }

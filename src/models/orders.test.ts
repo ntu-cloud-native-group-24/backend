@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeAll, jest } from '@jest/globals'
 import { createUserOfPrivilegeAndReturnUID, createDummyStore } from '../utils/testutils'
 import { createMeal } from './meals'
-import { createOrder, getOrder, checkedGetOrder } from './orders'
+import { createOrder, getOrder, checkedGetOrder, updateOrderStateOrThrow } from './orders'
 import { getSelectionGroupsWithData } from './customizations'
 import { UICustomizationsType } from '../schema/customizations'
 
@@ -75,7 +75,7 @@ test('create order', async () => {
 		notes: '',
 		payment_type: 'cash',
 		delivery_method: 'pickup',
-		state: 'paid',
+		state: 'pending',
 		total_price: 260,
 		details: [
 			{
@@ -171,4 +171,14 @@ test('checked get order for other user', async () => {
 })
 test('checked get order for another store owner', async () => {
 	expect(await checkedGetOrder(store2.owner_id, orderObj!.id)).toBeUndefined()
+})
+test("user can't update order state to preparing", async () => {
+	await expect(updateOrderStateOrThrow(user_id, orderObj!.id, 'preparing')).rejects.toThrow()
+})
+test("update order state can't go to invalid state", async () => {
+	await expect(updateOrderStateOrThrow(store.owner_id, orderObj!.id, 'done')).rejects.toThrow()
+})
+test('update order state: pending -> prepairing', async () => {
+	await updateOrderStateOrThrow(store.owner_id, orderObj!.id, 'preparing')
+	expect((await getOrder(orderObj!.id))!.state).toBe('preparing')
 })

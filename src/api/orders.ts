@@ -1,7 +1,17 @@
 import { FastifyInstance } from 'fastify'
-import { createOrder, checkedGetOrder } from '../models/orders'
-import { success, fail, wrapSuccessOrNotSchema, OrderRequestType, OrderRequestRef, OrderRef } from '../schema'
+import { createOrder, checkedGetOrder, updateOrderStateOrThrow } from '../models/orders'
+import {
+	success,
+	fail,
+	wrapSuccessOrNotSchema,
+	OrderRequestType,
+	OrderRequestRef,
+	OrderRef,
+	OrderStateRef
+} from '../schema'
 import { loginRequired } from './auth'
+import { storeManagerRequired } from './stores'
+import { OrderState } from '../db/types'
 
 export default async function init(app: FastifyInstance) {
 	app.post<{
@@ -39,7 +49,12 @@ export default async function init(app: FastifyInstance) {
 						type: 'object',
 						properties: wrapSuccessOrNotSchema({})
 					}
-				}
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
 			}
 		},
 		async (req, reply) => {
@@ -85,7 +100,12 @@ export default async function init(app: FastifyInstance) {
 						type: 'object',
 						properties: wrapSuccessOrNotSchema({})
 					}
-				}
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
 			}
 		},
 		async (req, reply) => {
@@ -95,6 +115,61 @@ export default async function init(app: FastifyInstance) {
 				return reply.code(404).send(fail('Order not found'))
 			}
 			reply.send(success({ order }))
+		}
+	)
+	app.patch<{
+		Params: { order_id: number }
+		Body: {
+			state: OrderState
+		}
+	}>(
+		'/orders/:order_id',
+		{
+			preHandler: storeManagerRequired,
+			schema: {
+				description: 'Update an order',
+				tags: ['order'],
+				summary: 'Update an order',
+				params: {
+					type: 'object',
+					properties: {
+						order_id: { type: 'number' }
+					}
+				},
+				body: {
+					type: 'object',
+					properties: {
+						state: OrderStateRef
+					}
+				},
+				response: {
+					200: {
+						description: 'Successful response',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					},
+					404: {
+						description: 'Order not found',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					}
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
+			}
+		},
+		async (req, reply) => {
+			const { order_id } = req.params
+			const order = await checkedGetOrder(req.user.id, order_id)
+			if (!order) {
+				return reply.code(404).send(fail('Order not found'))
+			}
+			const { state } = req.body
+			await updateOrderStateOrThrow(req.user.id, order_id, state)
+			reply.send(success({}))
 		}
 	)
 }

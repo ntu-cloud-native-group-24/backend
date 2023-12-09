@@ -28,6 +28,7 @@ import {
 	OrderRequestItemDef,
 	OrderRequestDef,
 	OrderDetailDef,
+	OrderStateDef,
 	OrderDef
 } from './schema'
 
@@ -58,6 +59,7 @@ export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(OrderRequestItemDef)
 	app.addSchema(OrderRequestDef)
 	app.addSchema(OrderDetailDef)
+	app.addSchema(OrderStateDef)
 	app.addSchema(OrderDef)
 	await app.register(fastifySwagger, {
 		swagger: {

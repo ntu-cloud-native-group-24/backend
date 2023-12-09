@@ -1,5 +1,6 @@
 import { Static, Type } from '../typebox-openapi'
 import { CustomizationsRef } from './customizations'
+import { DeliveryMethod, OrderState, PaymentType } from '../db/types'
 
 export const OrderRequestItemDef = Type.Object(
 	{
@@ -38,6 +39,12 @@ export const OrderDetailDef = Type.Object(
 	{ $id: 'OrderDetail' }
 )
 
+export const OrderStateDef = Type.StringLiteralUnion(['pending', 'preparing', 'done', 'cancelled'], {
+	$id: 'OrderState'
+})
+export const OrderStateRef = Type.Ref(OrderStateDef)
+export type OrderStateType = Static<typeof OrderStateDef>
+
 export const OrderDef = Type.Object(
 	{
 		id: Type.Number(),
@@ -46,7 +53,7 @@ export const OrderDef = Type.Object(
 		notes: Type.String(),
 		payment_type: Type.StringLiteralUnion(['cash', 'credit_card', 'monthly']),
 		delivery_method: Type.StringLiteralUnion(['delivery', 'pickup']),
-		state: Type.StringLiteralUnion(['paid', 'cancelled']),
+		state: OrderStateRef,
 		created_at: Type.String({ format: 'date-time' }),
 		total_price: Type.Number(),
 		details: Type.Array(OrderDetailDef)

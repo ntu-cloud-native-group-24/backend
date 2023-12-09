@@ -20,7 +20,7 @@ export type JsonValue = JsonArray | JsonObject | JsonPrimitive
 
 export type LoginType = 'regular' | 'sso'
 
-export type OrderState = 'aborted' | 'paid' | 'unpaid'
+export type OrderState = 'cancelled' | 'done' | 'pending' | 'preparing'
 
 export type PaymentType = 'cash' | 'credit_card' | 'monthly'
 
