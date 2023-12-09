@@ -1,5 +1,7 @@
 import type { ColumnType } from 'kysely'
 
+export type DeliveryMethod = 'delivery' | 'pickup'
+
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 	? ColumnType<S, I | undefined, U>
 	: ColumnType<T, T | undefined, T>
@@ -32,7 +34,7 @@ export interface MealCategoriesAssoc {
 }
 
 export interface Meals {
-	customizations: Json | null
+	customizations: Json
 	description: string | null
 	id: Generated<number>
 	is_available: Generated<boolean>
@@ -43,20 +45,23 @@ export interface Meals {
 }
 
 export interface OrderDetails {
+	calculated_price_per_item: number
+	customizations: Json
 	id: Generated<number>
 	meal_id: number
-	notes: string | null
+	notes: string
 	order_id: number
 	quantity: number
 }
 
 export interface Orders {
 	created_at: Generated<Timestamp>
-	delivery_method: string
+	delivery_method: DeliveryMethod
 	id: Generated<number>
-	notes: string | null
+	notes: string
 	payment_type: PaymentType
 	state: OrderState
+	store_id: number
 	user_id: number
 }
 

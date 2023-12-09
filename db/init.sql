@@ -98,7 +98,7 @@ CREATE TABLE
     "quantity" integer NOT NULL,
     "notes" text NOT NULL,
     "customizations" json NOT NULL,
-    "calculated_price" integer NOT NULL,
+    "calculated_price_per_item" integer NOT NULL,
     PRIMARY KEY ("id", "order_id")
   );
 
