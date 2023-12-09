@@ -4,7 +4,7 @@ import { createUserOfPrivilegeAndReturnUID, createDummyStore, getTokenByUserId }
 import { createMeal } from '../models/meals'
 import { getOrder } from '../models/orders'
 import { getSelectionGroupsWithData } from '../models/customizations'
-import { CustomizationsType } from '../schema/customizations'
+import { UICustomizationsType } from '../schema/customizations'
 
 let store: Awaited<ReturnType<typeof createDummyStore>>
 let user_id: Awaited<ReturnType<typeof createUserOfPrivilegeAndReturnUID>>
@@ -32,16 +32,18 @@ const mealData = {
 				items: [
 					{
 						name: '細麵',
-						price: 0
+						price: 0,
+						enabled: true
 					},
 					{
 						name: '粗麵',
-						price: 10
+						price: 10,
+						enabled: true
 					}
 				]
 			}
 		]
-	}
+	} as UICustomizationsType
 }
 
 beforeAll(async () => {
@@ -109,7 +111,7 @@ test('create order', async () => {
 					notes: '不要酸菜',
 					calculated_price_per_item: 130, // 120 + 10
 					customizations: {
-						selectionGroups: getSelectionGroupsWithData(mealData.customizations as CustomizationsType, [
+						selectionGroups: getSelectionGroupsWithData(mealData.customizations as UICustomizationsType, [
 							false,
 							true
 						])

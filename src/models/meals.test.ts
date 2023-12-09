@@ -11,6 +11,7 @@ import {
 	removeCategoryFromMeal,
 	getCategoriesOfMeal
 } from './meals'
+import { UICustomizationsType } from '../schema/customizations'
 
 let store: any
 let category: any
@@ -36,16 +37,18 @@ const meal = {
 				items: [
 					{
 						name: '細麵',
-						price: 0
+						price: 0,
+						enabled: true
 					},
 					{
 						name: '粗麵',
-						price: 10
+						price: 10,
+						enabled: true
 					}
 				]
 			}
 		]
-	}
+	} as UICustomizationsType
 }
 
 test('createMeal', async () => {

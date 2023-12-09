@@ -7,11 +7,13 @@ const radioGroup1 = {
 	items: [
 		{
 			name: 'item1',
-			price: 10
+			price: 10,
+			enabled: true
 		},
 		{
 			name: 'item2',
-			price: 20
+			price: 20,
+			enabled: true
 		}
 	]
 }
@@ -21,15 +23,18 @@ const checkboxGroup1 = {
 	items: [
 		{
 			name: 'item1',
-			price: 10
+			price: 10,
+			enabled: true
 		},
 		{
 			name: 'item2',
-			price: 20
+			price: 20,
+			enabled: true
 		},
 		{
 			name: 'item3',
-			price: 30
+			price: 30,
+			enabled: true
 		}
 	]
 }
@@ -110,6 +115,58 @@ test('statuses length does not match number of items (invalid)', () => {
 				selectionGroups: [radioGroup1]
 			},
 			[false, false, false]
+		)
+	).toThrow()
+})
+const radioGroup2 = {
+	type: 'radio' as const,
+	title: 'Choose one',
+	items: [
+		{
+			name: 'item1',
+			price: 10,
+			enabled: true
+		},
+		{
+			name: 'item2',
+			price: 20,
+			enabled: false
+		},
+		{
+			name: 'item3',
+			price: 30,
+			enabled: true
+		}
+	]
+}
+const checkboxGroup2 = {
+	type: 'checkbox' as const,
+	title: 'Choose one',
+	items: [
+		{
+			name: 'item1',
+			price: 10,
+			enabled: true
+		},
+		{
+			name: 'item2',
+			price: 20,
+			enabled: false
+		},
+		{
+			name: 'item3',
+			price: 30,
+			enabled: true
+		}
+	]
+}
+test('radio group (selecting disabled item)', () => {
+	expect(() =>
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [radioGroup2]
+			},
+			[false, true, false]
 		)
 	).toThrow()
 })

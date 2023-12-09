@@ -1,101 +1,101 @@
 import { Static, Type } from '../typebox-openapi'
 
-export const FoodSelectionItemDef = Type.Object(
+// describing the UI
+
+export const UISelectionItemDef = Type.Object(
 	{
 		name: Type.String(),
-		price: Type.Number()
+		price: Type.Number(),
+		enabled: Type.Boolean()
 	},
-	{ $id: 'FoodSelectionItem' }
+	{ $id: 'UISelectionItem' }
 )
-export const FoodSelectionItemRef = Type.Ref(FoodSelectionItemDef)
-export type FoodSelectionItemType = Static<typeof FoodSelectionItemDef>
+export const UISelectionItemRef = Type.Ref(UISelectionItemDef)
+export type UISelectionItemType = Static<typeof UISelectionItemDef>
 
-export const FoodRadioSelectionGroupDef = Type.Object(
+export const UIRadioSelectionGroupDef = Type.Object(
 	{
 		type: Type.Literal('radio'),
 		title: Type.String(),
-		items: Type.Array(FoodSelectionItemRef)
+		items: Type.Array(UISelectionItemRef)
 	},
-	{ $id: 'FoodRadioSelectionGroup' }
+	{ $id: 'UIRadioSelectionGroup' }
 )
-export const FoodRadioSelectionGroupRef = Type.Ref(FoodRadioSelectionGroupDef)
-export type FoodRadioSelectionGroupType = Static<typeof FoodRadioSelectionGroupDef>
+export const UIRadioSelectionGroupRef = Type.Ref(UIRadioSelectionGroupDef)
+export type UIRadioSelectionGroupType = Static<typeof UIRadioSelectionGroupDef>
 
-export const FoodCheckboxSelectionGroupDef = Type.Object(
+export const UICheckboxSelectionGroupDef = Type.Object(
 	{
 		type: Type.Literal('checkbox'),
 		title: Type.String(),
-		items: Type.Array(FoodSelectionItemRef)
+		items: Type.Array(UISelectionItemRef)
 	},
-	{ $id: 'FoodCheckboxSelectionGroup' }
+	{ $id: 'UICheckboxSelectionGroup' }
 )
-export const FoodCheckboxSelectionGroupRef = Type.Ref(FoodCheckboxSelectionGroupDef)
-export type FoodCheckboxSelectionGroupType = Static<typeof FoodCheckboxSelectionGroupDef>
+export const UICheckboxSelectionGroupRef = Type.Ref(UICheckboxSelectionGroupDef)
+export type UICheckboxSelectionGroupType = Static<typeof UICheckboxSelectionGroupDef>
 
-export const FoodSelectionGroupDef = Type.Union([FoodRadioSelectionGroupRef, FoodCheckboxSelectionGroupRef], {
-	$id: 'FoodSelectionGroup'
+export const UISelectionGroupDef = Type.Union([UIRadioSelectionGroupRef, UICheckboxSelectionGroupRef], {
+	$id: 'UISelectionGroup'
 })
-export const FoodSelectionGroupRef = Type.Ref(FoodSelectionGroupDef)
-export type FoodSelectionGroupType = Static<typeof FoodSelectionGroupDef>
+export const UISelectionGroupRef = Type.Ref(UISelectionGroupDef)
+export type UISelectionGroupType = Static<typeof UISelectionGroupDef>
+
+export const UICustomizationsDef = Type.Object(
+	{
+		selectionGroups: Type.Array(UISelectionGroupRef)
+	},
+	{ $id: 'UICustomizations' }
+)
+export const UICustomizationsRef = Type.Ref(UICustomizationsDef)
+export type UICustomizationsType = Static<typeof UICustomizationsDef>
+
+// describing the data in order details
+
+export const SelectionItemDef = Type.Object(
+	{
+		name: Type.String(),
+		price: Type.Number(),
+		selected: Type.Boolean()
+	},
+	{ $id: 'SelectionItem' }
+)
+export const SelectionItemRef = Type.Ref(SelectionItemDef)
+export type SelectionItemType = Static<typeof SelectionItemDef>
+
+export const RadioSelectionGroupDef = Type.Object(
+	{
+		type: Type.Literal('radio'),
+		title: Type.String(),
+		items: Type.Array(SelectionItemRef)
+	},
+	{ $id: 'RadioSelectionGroup' }
+)
+export const RadioSelectionGroupRef = Type.Ref(RadioSelectionGroupDef)
+export type RadioSelectionGroupType = Static<typeof RadioSelectionGroupDef>
+
+export const CheckboxSelectionGroupDef = Type.Object(
+	{
+		type: Type.Literal('checkbox'),
+		title: Type.String(),
+		items: Type.Array(SelectionItemRef)
+	},
+	{ $id: 'CheckboxSelectionGroup' }
+)
+export const CheckboxSelectionGroupRef = Type.Ref(CheckboxSelectionGroupDef)
+export type FoodCheckboxSelectionGroupType = Static<typeof CheckboxSelectionGroupDef>
+
+export const SelectionGroupDef = Type.Union([RadioSelectionGroupRef, CheckboxSelectionGroupRef], {
+	$id: 'SelectionGroup'
+})
+export const SelectionGroupRef = Type.Ref(SelectionGroupDef)
+export type SelectionGroupType = Static<typeof SelectionGroupDef>
 
 export const CustomizationsDef = Type.Object(
 	{
-		selectionGroups: Type.Array(FoodSelectionGroupRef)
+		selectionGroups: Type.Array(SelectionGroupRef)
 	},
 	{ $id: 'Customizations' }
 )
 export const CustomizationsRef = Type.Ref(CustomizationsDef)
 export type CustomizationsType = Static<typeof CustomizationsDef>
-
-// with status: boolean
-
-Type.Intersect([FoodSelectionItemDef, Type.Object({ status: Type.Boolean() })])
-
-export const FoodSelectionItemWithStatusDef = Type.Object(
-	{
-		name: Type.String(),
-		price: Type.Number(),
-		status: Type.Boolean()
-	},
-	{ $id: 'FoodSelectionItemWithStatus' }
-)
-export const FoodSelectionItemWithStatusRef = Type.Ref(FoodSelectionItemWithStatusDef)
-export type FoodSelectionItemWithStatusType = Static<typeof FoodSelectionItemWithStatusDef>
-
-export const FoodRadioSelectionGroupWithStatusDef = Type.Object(
-	{
-		type: Type.Literal('radio'),
-		title: Type.String(),
-		items: Type.Array(FoodSelectionItemWithStatusRef)
-	},
-	{ $id: 'FoodRadioSelectionGroupWithStatus' }
-)
-export const FoodRadioSelectionGroupWithStatusRef = Type.Ref(FoodRadioSelectionGroupWithStatusDef)
-export type FoodRadioSelectionGroupWithStatusType = Static<typeof FoodRadioSelectionGroupWithStatusDef>
-
-export const FoodCheckboxSelectionGroupWithStatusDef = Type.Object(
-	{
-		type: Type.Literal('checkbox'),
-		title: Type.String(),
-		items: Type.Array(FoodSelectionItemWithStatusRef)
-	},
-	{ $id: 'FoodCheckboxSelectionGroupWithStatus' }
-)
-export const FoodCheckboxSelectionGroupWithStatusRef = Type.Ref(FoodCheckboxSelectionGroupWithStatusDef)
-export type FoodCheckboxSelectionGroupWithStatusType = Static<typeof FoodCheckboxSelectionGroupWithStatusDef>
-
-export const FoodSelectionGroupWithStatusDef = Type.Union(
-	[FoodRadioSelectionGroupWithStatusRef, FoodCheckboxSelectionGroupWithStatusRef],
-	{ $id: 'FoodSelectionGroupWithStatus' }
-)
-export const FoodSelectionGroupWithStatusRef = Type.Ref(FoodSelectionGroupWithStatusDef)
-export type FoodSelectionGroupWithStatusType = Static<typeof FoodSelectionGroupWithStatusDef>
-
-export const CustomizationsWithStatusDef = Type.Object(
-	{
-		selectionGroups: Type.Array(FoodSelectionGroupWithStatusRef)
-	},
-	{ $id: 'CustomizationsWithStatus' }
-)
-export const CustomizationsWithStatusRef = Type.Ref(CustomizationsWithStatusDef)
-export type CustomizationsWithStatusType = Static<typeof CustomizationsWithStatusDef>

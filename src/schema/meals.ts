@@ -1,5 +1,5 @@
 import { Static, Type } from '../typebox-openapi'
-import { CustomizationsRef } from './customizations'
+import { UICustomizationsRef } from './customizations'
 
 export const MealDef = Type.Object(
 	{
@@ -9,7 +9,7 @@ export const MealDef = Type.Object(
 		price: Type.Number(),
 		picture: Type.String(),
 		is_available: Type.Boolean(),
-		customizations: CustomizationsRef
+		customizations: UICustomizationsRef
 	},
 	{ $id: 'Meal' }
 )

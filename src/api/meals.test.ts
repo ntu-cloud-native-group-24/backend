@@ -28,11 +28,13 @@ const meal = {
 				items: [
 					{
 						name: '細麵',
-						price: 0
+						price: 0,
+						enabled: true
 					},
 					{
 						name: '粗麵',
-						price: 10
+						price: 10,
+						enabled: true
 					}
 				]
 			}

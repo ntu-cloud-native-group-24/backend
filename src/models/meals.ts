@@ -1,5 +1,7 @@
 import { db } from '../db'
 import { JsonValue } from '../db/types'
+import { validateUICustomizationsOrThrow } from './customizations'
+import { UICustomizationsType } from '../schema'
 
 export async function createMeal({
 	name,
@@ -16,8 +18,9 @@ export async function createMeal({
 	picture: string
 	is_available: boolean
 	store_id: number
-	customizations: JsonValue
+	customizations: UICustomizationsType
 }) {
+	validateUICustomizationsOrThrow(customizations)
 	const res = await db
 		.insertInto('meals')
 		.values({

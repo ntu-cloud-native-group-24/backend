@@ -1,6 +1,6 @@
 import { db } from '../db'
 import { OrderRequestType } from '../schema/orders'
-import { CustomizationsType } from '../schema/customizations'
+import { UICustomizationsType } from '../schema/customizations'
 import { getSelectionGroupsWithData, calculatePriceOfSelectionGroupsWithData } from './customizations'
 
 export async function createOrder(user_id: number, store_id: number, order: OrderRequestType) {
@@ -30,7 +30,7 @@ export async function createOrder(user_id: number, store_id: number, order: Orde
 		const newItems = order.items.map((item, index) => ({
 			...item,
 			selection_groups: getSelectionGroupsWithData(
-				mealData[index].customizations as CustomizationsType,
+				mealData[index].customizations as UICustomizationsType,
 				item.customization_statuses
 			),
 			price: mealData[index].price

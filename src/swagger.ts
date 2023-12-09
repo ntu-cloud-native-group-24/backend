@@ -12,16 +12,16 @@ import {
 	StoreCategoryDef,
 	PrivilegeTypeDef,
 	UserDef,
-	FoodSelectionItemDef,
-	FoodRadioSelectionGroupDef,
-	FoodCheckboxSelectionGroupDef,
-	FoodSelectionGroupDef,
+	UISelectionItemDef,
+	UIRadioSelectionGroupDef,
+	UICheckboxSelectionGroupDef,
+	UISelectionGroupDef,
+	UICustomizationsDef,
+	SelectionItemDef,
+	RadioSelectionGroupDef,
+	CheckboxSelectionGroupDef,
+	SelectionGroupDef,
 	CustomizationsDef,
-	FoodSelectionItemWithStatusDef,
-	FoodRadioSelectionGroupWithStatusDef,
-	FoodCheckboxSelectionGroupWithStatusDef,
-	FoodSelectionGroupWithStatusDef,
-	CustomizationsWithStatusDef,
 	MealDef,
 	MealWithoutIdDef,
 	MealCategoryDef,
@@ -42,16 +42,16 @@ export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(StoreCategoryDef)
 	app.addSchema(PrivilegeTypeDef)
 	app.addSchema(UserDef)
-	app.addSchema(FoodSelectionItemDef)
-	app.addSchema(FoodRadioSelectionGroupDef)
-	app.addSchema(FoodCheckboxSelectionGroupDef)
-	app.addSchema(FoodSelectionGroupDef)
+	app.addSchema(UISelectionItemDef)
+	app.addSchema(UIRadioSelectionGroupDef)
+	app.addSchema(UICheckboxSelectionGroupDef)
+	app.addSchema(UISelectionGroupDef)
+	app.addSchema(UICustomizationsDef)
+	app.addSchema(SelectionItemDef)
+	app.addSchema(RadioSelectionGroupDef)
+	app.addSchema(CheckboxSelectionGroupDef)
+	app.addSchema(SelectionGroupDef)
 	app.addSchema(CustomizationsDef)
-	app.addSchema(FoodSelectionItemWithStatusDef)
-	app.addSchema(FoodRadioSelectionGroupWithStatusDef)
-	app.addSchema(FoodCheckboxSelectionGroupWithStatusDef)
-	app.addSchema(FoodSelectionGroupWithStatusDef)
-	app.addSchema(CustomizationsWithStatusDef)
 	app.addSchema(MealDef)
 	app.addSchema(MealWithoutIdDef)
 	app.addSchema(MealCategoryDef)
