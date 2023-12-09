@@ -33,6 +33,7 @@
 		"build": "tsc",
 		"dev": "ts-node-dev --respawn src/app.ts",
 		"format": "prettier src -w",
-		"test": "jest --coverage"
+		"test": "jest --coverage",
+		"start": "node dist/app.js"
 	}
 }
