@@ -68,6 +68,7 @@ test('create order', async () => {
 		payment_type: 'cash',
 		delivery_method: 'pickup',
 		state: 'paid',
+		total_price: 260,
 		details: [
 			{
 				id: expect.any(Number),

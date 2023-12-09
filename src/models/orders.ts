@@ -55,8 +55,10 @@ export async function getOrder(order_id: number) {
 	const order = await db.selectFrom('orders').where('id', '=', order_id).selectAll().executeTakeFirst()
 	if (!order) return
 	const details = await db.selectFrom('order_details').where('order_id', '=', order_id).selectAll().execute()
+	const total_price = details.reduce((acc, detail) => acc + detail.calculated_price_per_item * detail.quantity, 0)
 	return {
 		...order,
-		details
+		details,
+		total_price
 	}
 }
