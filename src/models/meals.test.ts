@@ -36,13 +36,11 @@ const meal = {
 				items: [
 					{
 						name: '細麵',
-						price: 0,
-						status: false
+						price: 0
 					},
 					{
 						name: '粗麵',
-						price: 10,
-						status: true
+						price: 10
 					}
 				]
 			}

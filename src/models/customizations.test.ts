@@ -103,3 +103,13 @@ test('composed radio and checkbox group (invalid radio)', () => {
 		)
 	).toThrow()
 })
+test('statuses length does not match number of items (invalid)', () => {
+	expect(() =>
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [radioGroup1]
+			},
+			[false, false, false]
+		)
+	).toThrow()
+})

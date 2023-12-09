@@ -19,7 +19,7 @@ type SelectionGroupWithData = (
 	  }
 )[]
 
-function populateCustomizationsInplace(customizations: CustomizationsType, statuses: boolean[]) {
+function fillSelectionGroupStatusInplace(customizations: CustomizationsType, statuses: boolean[]) {
 	const numberOfItems = customizations.selectionGroups.reduce((acc, group) => acc + group.items.length, 0)
 	if (statuses.length !== numberOfItems) {
 		throw new Error('Invalid statuses')
@@ -44,14 +44,18 @@ function validateGroupConstraints(groups: SelectionGroupWithData) {
 	return true
 }
 
-export function calculatePriceOfCustomizations(customizations: CustomizationsType, statuses: boolean[]) {
+export function getSelectionGroupsWithData(customizations: CustomizationsType, statuses: boolean[]) {
 	// (typeof customizations.selectionGroups) is a supertype of SelectionGroupWithData
 	// so it is safe to cast
 	const groups = customizations.selectionGroups as SelectionGroupWithData
-	populateCustomizationsInplace(customizations, statuses)
+	fillSelectionGroupStatusInplace(customizations, statuses)
 	if (!validateGroupConstraints(groups)) {
 		throw new Error('Invalid customizations')
 	}
+	return groups
+}
+
+export function calculatePriceOfSelectionGroupsWithData(groups: SelectionGroupWithData) {
 	let price = 0
 	for (const group of groups) {
 		for (const item of group.items) {
@@ -61,4 +65,9 @@ export function calculatePriceOfCustomizations(customizations: CustomizationsTyp
 		}
 	}
 	return price
+}
+
+export function calculatePriceOfCustomizations(customizations: CustomizationsType, statuses: boolean[]) {
+	const groups = getSelectionGroupsWithData(customizations, statuses)
+	return calculatePriceOfSelectionGroupsWithData(groups)
 }
