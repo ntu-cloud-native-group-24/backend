@@ -5,6 +5,7 @@ import { getSelectionGroupsWithData, calculatePriceOfSelectionGroupsWithData } f
 
 export async function createOrder(user_id: number, store_id: number, order: OrderRequestType) {
 	const orderId = await db.transaction().execute(async tx => {
+		if (order.items.length === 0) throw new Error('Order must not be empty')
 		if (!order.items.every(item => item.quantity > 0)) throw new Error('Invalid quantity')
 		const mealIds = order.items.map(item => item.meal_id)
 		const mealData = await tx

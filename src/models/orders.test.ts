@@ -137,3 +137,16 @@ test('create order with meal from another store', async () => {
 		})
 	).rejects.toThrow()
 })
+test('create order with empty order', async () => {
+	await expect(
+		createOrder(user_id, store.id, {
+			notes: '',
+			payment_type: 'cash',
+			delivery_method: 'pickup',
+			items: []
+		})
+	).rejects.toThrow()
+})
+test('get non existent order', async () => {
+	expect(await getOrder(-1)).toBeUndefined()
+})
