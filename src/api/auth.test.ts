@@ -14,6 +14,7 @@ test('Register', async () => {
 		},
 		payload: {
 			name: 'test',
+			email: 'user@example.com',
 			username,
 			password
 		}
@@ -45,6 +46,7 @@ test('Register (bad username)', async () => {
 		},
 		payload: {
 			name: 'test',
+			email: 'user@example.com',
 			username: 'test',
 			password: randString(12)
 		}
@@ -61,6 +63,7 @@ test('Register (bad password)', async () => {
 		},
 		payload: {
 			name: 'test',
+			email: 'user@example.com',
 			username: randString(8),
 			password: 'test'
 		}
@@ -77,6 +80,7 @@ test('Register (user exists)', async () => {
 		},
 		payload: {
 			name: 'test',
+			email: 'user@example.com',
 			username,
 			password
 		}

@@ -9,11 +9,13 @@ export const REDIS_TOKEN_EXPIRY = 60 * 60 * 24 * 7 // 1 week
 
 export async function createUser({
 	name,
+	email,
 	username,
 	password,
 	privilege
 }: {
 	name: string
+	email: string
 	username: string
 	password: string
 	privilege: PrivilegeType
@@ -22,7 +24,7 @@ export async function createUser({
 	const user = await db.transaction().execute(async tx => {
 		const user = await tx
 			.insertInto('users')
-			.values({ name, login_type: 'regular' })
+			.values({ name, email, login_type: 'regular' })
 			.returning('id')
 			.executeTakeFirst()
 		if (!user) throw new Error('User creation failed')

@@ -17,6 +17,7 @@ const password = randString(12)
 test('Create user', async () => {
 	const success = await createUser({
 		name: 'test',
+		email: 'user@example.com',
 		username,
 		password,
 		privilege: 'store_manager'

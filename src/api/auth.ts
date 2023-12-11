@@ -81,7 +81,7 @@ export default async function init(app: FastifyInstance) {
 		},
 		async (req, reply) => {
 			const { privilege } = req.query
-			const { name, username, password } = req.body
+			const { name, email, username, password } = req.body
 			if (username.length < 8) {
 				reply.code(400).send(fail('Username must be at least 8 characters'))
 				return
@@ -97,6 +97,7 @@ export default async function init(app: FastifyInstance) {
 			}
 			const good = await User.createUser({
 				name,
+				email,
 				username,
 				password,
 				privilege

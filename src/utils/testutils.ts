@@ -17,6 +17,7 @@ export async function createUserOfPrivilegeAndReturnToken(app: FastifyInstance, 
 		},
 		payload: {
 			name: 'test',
+			email: 'user@example.com',
 			username,
 			password
 		}
@@ -37,6 +38,7 @@ export async function createUserOfPrivilegeAndReturnUID(privilege: PrivilegeType
 	const password = randString(12)
 	await createUser({
 		name: 'test',
+		email: 'user@example.com',
 		username,
 		password,
 		privilege

@@ -113,6 +113,7 @@ export interface UserPrivileges {
 }
 
 export interface Users {
+	email: string
 	id: Generated<number>
 	login_type: LoginType
 	name: string

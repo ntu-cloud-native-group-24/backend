@@ -49,12 +49,14 @@ export async function sendOrderNotification(order_id: number) {
 		}
 		return
 	}
-	const { name, email } = await db
+	const row = await db
 		.selectFrom('orders')
 		.where('id', '=', order_id)
 		.innerJoin('stores', 'store_id', 'stores.id')
 		.select(['stores.email', 'stores.name'])
-		.executeTakeFirstOrThrow()
+		.executeTakeFirst()
+	if (!row) return
+	const { name, email } = row
 	if (!client) {
 		client = new EmailClient(process.env.AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING)
 	}

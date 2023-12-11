@@ -13,6 +13,7 @@ export type LoginUserType = Static<typeof LoginUserDef>
 export const RegisterUserDef = Type.Object(
 	{
 		name: Type.String(),
+		email: Type.String(),
 		username: Type.String(),
 		password: Type.String()
 	},
