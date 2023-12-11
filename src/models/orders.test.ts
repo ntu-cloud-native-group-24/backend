@@ -20,7 +20,7 @@ const mealData = {
 	description: '好吃的牛肉麵',
 	price: 120,
 	picture: 'https://example.com/beef-noodle.jpg',
-	is_available: false,
+	is_available: true,
 	customizations: {
 		selectionGroups: [
 			{
@@ -95,6 +95,24 @@ test('create order', async () => {
 		]
 	})
 	orderObj = order
+})
+test('create order with unavailable meal', async () => {
+	const meal = await createMeal({ ...mealData, store_id: store.id, is_available: false })
+	expect(
+		createOrder(user_id, store.id, {
+			notes: '',
+			payment_type: 'cash',
+			delivery_method: 'pickup',
+			items: [
+				{
+					meal_id: meal.id,
+					quantity: 2,
+					notes: '不要酸菜',
+					customization_statuses: [false, true]
+				}
+			]
+		})
+	).rejects.toThrow()
 })
 test('create order with invalid quantity', async () => {
 	await expect(

@@ -14,6 +14,7 @@ export async function createOrder(user_id: number, store_id: number, order: Orde
 			.selectFrom('meals')
 			.where('id', 'in', mealIds)
 			.where('store_id', '=', store_id)
+			.where('is_available', '=', true)
 			.select(['price', 'customizations'])
 			.execute()
 		if (mealData.length !== mealIds.length) throw new Error('Invalid meal ids')

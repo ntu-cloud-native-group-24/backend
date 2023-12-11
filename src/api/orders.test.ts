@@ -23,7 +23,7 @@ const mealData = {
 	description: '好吃的牛肉麵',
 	price: 120,
 	picture: 'https://example.com/beef-noodle.jpg',
-	is_available: false,
+	is_available: true,
 	customizations: {
 		selectionGroups: [
 			{
