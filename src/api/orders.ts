@@ -65,9 +65,9 @@ export default async function init(app: FastifyInstance) {
 				const order_id = await createOrder(user_id, store_id, order)
 				sendOrderNotification(order_id)
 					.then(res => {
-						if (res) {
-							req.log.info(`Notification mail successfully sent to ${res.email}`)
-						}
+						res.map(r => {
+							req.log.info(`Notification mail successfully sent to ${r.email}`)
+						})
 					})
 					.catch(e => {
 						req.log.error(`Error sending notification email: ${e.message}`)

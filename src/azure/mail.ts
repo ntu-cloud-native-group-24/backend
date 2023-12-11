@@ -47,28 +47,45 @@ export async function sendOrderNotification(order_id: number) {
 			console.warn('No email notification will be sent because environment variables are not set.')
 			;(sendOrderNotification as any).warned = true
 		}
-		return
+		return []
 	}
-	const row = await db
+	const { name: storeName, email: storeEmail } = await db
 		.selectFrom('orders')
-		.where('id', '=', order_id)
+		.where('orders.id', '=', order_id)
 		.innerJoin('stores', 'store_id', 'stores.id')
 		.select(['stores.email', 'stores.name'])
-		.executeTakeFirst()
-	if (!row) return
-	const { name, email } = row
+		.executeTakeFirstOrThrow()
+	const { name: userName, email: userEmail } = await db
+		.selectFrom('orders')
+		.where('orders.id', '=', order_id)
+		.innerJoin('users', 'user_id', 'users.id')
+		.select(['users.email', 'users.name'])
+		.executeTakeFirstOrThrow()
 	if (!client) {
 		client = new EmailClient(process.env.AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING)
 	}
-	const res = await sendNotificationEmail(client, process.env.NOTIFICATION_EMAIL_SENDER, email, {
-		subject: `New order for ${name}!`,
+	const p1 = sendNotificationEmail(client, process.env.NOTIFICATION_EMAIL_SENDER, storeEmail, {
+		subject: `New order for ${storeName}!`,
 		plainText: `New order #${order_id} has been created, please check your dashboard.`,
 		html: `<html><h1>New order #${order_id} has been created, please check your dashboard.</h1></html>`
 	})
-	return {
-		status: res.status,
-		email
-	}
+	const p2 = sendNotificationEmail(client, process.env.NOTIFICATION_EMAIL_SENDER, userEmail, {
+		subject: `${userName}, Order #${order_id} has been created!`,
+		plainText: `Your order #${order_id} has been created, please check your dashboard.`,
+		html: `<html><h1>Your order #${order_id} has been created, please check your dashboard.</h1></html>`
+	})
+	const res1 = await p1
+	const res2 = await p2
+	return [
+		{
+			status: res1.status,
+			email: storeEmail
+		},
+		{
+			status: res2.status,
+			email: userEmail
+		}
+	]
 }
 
 /* istanbul ignore next */
