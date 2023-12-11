@@ -12,6 +12,7 @@ import {
 import { loginRequired } from './auth'
 import { storeManagerRequired } from './stores'
 import { OrderState } from '../db/types'
+import { sendOrderNotification } from '../azure/mail'
 
 export default async function init(app: FastifyInstance) {
 	app.post<{
@@ -62,6 +63,15 @@ export default async function init(app: FastifyInstance) {
 			const { store_id, order } = req.body
 			try {
 				const order_id = await createOrder(user_id, store_id, order)
+				sendOrderNotification(order_id)
+					.then(res => {
+						if (res) {
+							req.log.info(`Notification mail successfully sent to ${res.email}`)
+						}
+					})
+					.catch(e => {
+						req.log.error(`Error sending notification email: ${e.message}`)
+					})
 				reply.send(success({ order_id }))
 			} catch (e) {
 				if (e instanceof Error) {
