@@ -15,6 +15,7 @@ export async function createFastify(logger: boolean) {
 }
 export type FastifyInstanceType = Awaited<ReturnType<typeof createFastify>>
 
+/* istanbul ignore next */
 if (require.main === module) {
 	createFastify(true).then(app => {
 		app.listen(

@@ -6,6 +6,8 @@
 	"author": "group 24",
 	"license": "MIT",
 	"dependencies": {
+		"@azure/identity": "^4.0.0",
+		"@azure/storage-blob": "^12.17.0",
 		"@fastify/swagger": "^8.12.0",
 		"@fastify/swagger-ui": "^1.10.1",
 		"@fastify/type-provider-typebox": "^3.5.0",
