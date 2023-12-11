@@ -1,7 +1,7 @@
 import { UICustomizationsType, SelectionGroupType } from '../schema'
 
 export function validateUICustomizationsOrThrow(customizations: UICustomizationsType) {
-	const allDisabledGroups = customizations.selectionGroups.every(group => group.items.every(item => !item.enabled))
+	const allDisabledGroups = customizations.selectionGroups.some(group => group.items.every(item => !item.enabled))
 	if (allDisabledGroups) {
 		throw new Error('Each selection group must have at least one enabled item')
 	}
@@ -18,6 +18,10 @@ function validateGroupConstraintsOrThrow(groups: SelectionGroupType[]) {
 }
 
 export function getSelectionGroupsWithData(customizations: UICustomizationsType, selections: boolean[]) {
+	const totLen = customizations.selectionGroups.reduce((acc, group) => acc + group.items.length, 0)
+	if (selections.length !== totLen) {
+		throw new Error('Selections array length does not match the number of items in the customizations')
+	}
 	const groups: SelectionGroupType[] = []
 	const ar = selections.slice().reverse()
 	for (const group of customizations.selectionGroups) {

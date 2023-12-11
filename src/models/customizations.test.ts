@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeAll, jest } from '@jest/globals'
-import { calculatePriceOfCustomizations } from './customizations'
+import { validateUICustomizationsOrThrow, calculatePriceOfCustomizations } from './customizations'
 
 const radioGroup1 = {
 	type: 'radio' as const,
@@ -38,6 +38,50 @@ const checkboxGroup1 = {
 		}
 	]
 }
+test('validateUICustomizationsOrThrow 1', () => {
+	expect(() =>
+		validateUICustomizationsOrThrow({
+			selectionGroups: [radioGroup1, checkboxGroup1]
+		})
+	).not.toThrow()
+})
+test('validateUICustomizationsOrThrow 2', () => {
+	expect(() =>
+		validateUICustomizationsOrThrow({
+			selectionGroups: []
+		})
+	).not.toThrow()
+})
+test('validateUICustomizationsOrThrow all disabled', () => {
+	expect(() =>
+		validateUICustomizationsOrThrow({
+			selectionGroups: [
+				{
+					type: 'radio',
+					title: 'Choose one',
+					items: []
+				}
+			]
+		})
+	).toThrow()
+	expect(() =>
+		validateUICustomizationsOrThrow({
+			selectionGroups: [
+				{
+					type: 'radio',
+					title: 'Choose one',
+					items: [
+						{
+							name: 'item1',
+							price: 10,
+							enabled: false
+						}
+					]
+				}
+			]
+		})
+	).toThrow()
+})
 test('radio group with one selection', () => {
 	expect(
 		calculatePriceOfCustomizations(
@@ -114,6 +158,14 @@ test('statuses length does not match number of items (invalid)', () => {
 			{
 				selectionGroups: [radioGroup1]
 			},
+			[false]
+		)
+	).toThrow()
+	expect(() =>
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [radioGroup1]
+			},
 			[false, false, false]
 		)
 	).toThrow()
@@ -165,6 +217,16 @@ test('radio group (selecting disabled item)', () => {
 		calculatePriceOfCustomizations(
 			{
 				selectionGroups: [radioGroup2]
+			},
+			[false, true, false]
+		)
+	).toThrow()
+})
+test('radio group (selecting disabled item)', () => {
+	expect(() =>
+		calculatePriceOfCustomizations(
+			{
+				selectionGroups: [checkboxGroup2]
 			},
 			[false, true, false]
 		)
