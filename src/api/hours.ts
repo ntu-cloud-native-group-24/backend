@@ -168,8 +168,8 @@ export default async function init(app: FastifyInstance) {
 			if (store.owner_id !== req.user.id) {
 				return reply.code(400).send(fail('You are not the owner of this store'))
 			}
-			const hours = await deleteOpeningHours(hour_id)
-			if (hours) {
+			const good = await deleteOpeningHours(hour_id)
+			if (good) {
 				reply.send(success({}))
 			} else {
 				reply.code(400).send(fail('Unable to delete opening hours'))

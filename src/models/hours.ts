@@ -28,5 +28,6 @@ export async function getOpeningHoursByStoreId(store_id: number) {
 	return db.selectFrom('stores_opening_hours').where('store_id', '=', store_id).selectAll().execute()
 }
 export async function deleteOpeningHours(id: number) {
-	return db.deleteFrom('stores_opening_hours').where('id', '=', id).execute()
+	const { numDeletedRows } = await db.deleteFrom('stores_opening_hours').where('id', '=', id).executeTakeFirst()
+	return numDeletedRows === 1n
 }

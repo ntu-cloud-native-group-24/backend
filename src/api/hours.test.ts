@@ -69,3 +69,57 @@ test('Delete Opening Hours', async () => {
 		hours: openingHoursResp.slice(1)
 	})
 })
+test('Get non-existent store opening hours', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/hours`
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toMatchObject({
+		success: false,
+		message: 'Store not found'
+	})
+})
+test('Add opening hours to non-existent store', async () => {
+	const response = await app.inject({
+		method: 'POST',
+		url: `/api/store/0/hours`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: openingHours[0]
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toMatchObject({
+		success: false,
+		message: 'Store not found'
+	})
+})
+test('Delete opening hours from non-existent store', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/0/hours/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toMatchObject({
+		success: false,
+		message: 'Store not found'
+	})
+})
+test('Delete non-existent opening hours', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/${store.id}/hours/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(400)
+	expect(response.json()).toMatchObject({
+		success: false,
+		message: 'Unable to delete opening hours'
+	})
+})
