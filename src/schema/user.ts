@@ -32,6 +32,7 @@ export const UserDef = Type.Object(
 	{
 		id: Type.Number(),
 		name: Type.String(),
+		email: Type.String(),
 		privileges: Type.Array(PrivilegeTypeDef)
 	},
 	{ $id: 'User' }

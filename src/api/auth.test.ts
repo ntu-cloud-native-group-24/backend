@@ -4,6 +4,7 @@ import { randString } from '../utils'
 
 const username = randString(8)
 const password = randString(12)
+const newPassword = randString(12)
 
 test('Register', async () => {
 	const response = await app.inject({
@@ -122,6 +123,68 @@ describe('Login and Auth', () => {
 				privileges: ['consumer']
 			}
 		})
+	})
+	test('Change me', async () => {
+		const response = await app.inject({
+			method: 'POST',
+			url: '/api/me',
+			headers: {
+				'X-API-KEY': token
+			},
+			payload: {
+				name: 'peko',
+				email: 'peko@gmail.com'
+			}
+		})
+		expect(response.statusCode).toBe(200)
+		expect(response.json()).toMatchObject({
+			success: true
+		})
+		const response2 = await app.inject({
+			method: 'GET',
+			url: '/api/me',
+			headers: {
+				'X-API-KEY': token
+			}
+		})
+		expect(response2.statusCode).toBe(200)
+		expect(response2.json()).toMatchObject({
+			success: true,
+			user: {
+				name: 'peko',
+				email: 'peko@gmail.com',
+				id: expect.any(Number),
+				privileges: ['consumer']
+			}
+		})
+	})
+	test('Change password', async () => {
+		const response = await app.inject({
+			method: 'POST',
+			url: '/api/me/password',
+			headers: {
+				'X-API-KEY': token
+			},
+			payload: {
+				password: newPassword,
+				password_old: password
+			}
+		})
+		expect(response.statusCode).toBe(200)
+		expect(response.json()).toMatchObject({
+			success: true
+		})
+		const loginResponse = await app.inject({
+			method: 'POST',
+			url: '/api/login',
+			payload: {
+				username,
+				password: newPassword
+			}
+		})
+		expect(loginResponse.statusCode).toBe(200)
+		const obj = loginResponse.json()
+		expect(obj).toMatchObject({ success: true, message: 'Login successful' })
 	})
 })
 test('Login (incorrect password)', async () => {

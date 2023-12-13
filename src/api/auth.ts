@@ -173,4 +173,84 @@ export default async function init(app: FastifyInstance) {
 			)
 		}
 	)
+	app.post<{
+		Body: {
+			name: string
+			email: string
+		}
+	}>(
+		'/me',
+		{
+			preHandler: loginRequired,
+			schema: {
+				description: 'Modify current user',
+				tags: ['auth', 'user'],
+				summary: 'Modify current user',
+				params: {
+					type: 'object',
+					properties: {
+						name: { type: 'string' },
+						email: { type: 'string' }
+					}
+				},
+				response: {
+					200: wrapSuccessOrNotSchema({})
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
+			}
+		},
+		async (req, reply) => {
+			const { name, email } = req.body
+			await User.modifyUser({
+				id: req.user.id,
+				name,
+				email
+			})
+			reply.send(success({}, 'User modified'))
+		}
+	)
+	app.post<{
+		Body: {
+			password: string
+			password_old: string
+		}
+	}>(
+		'/me/password',
+		{
+			preHandler: loginRequired,
+			schema: {
+				description: 'Change password',
+				tags: ['auth', 'user'],
+				summary: 'Change password',
+				params: {
+					type: 'object',
+					properties: {
+						password: { type: 'string' },
+						password_old: { type: 'string' }
+					}
+				},
+				response: {
+					200: wrapSuccessOrNotSchema({}),
+					400: wrapSuccessOrNotSchema({})
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
+			}
+		},
+		async (req, reply) => {
+			const good = await User.changePassword(req.user.id, req.body.password_old, req.body.password)
+			if (good) {
+				reply.send(success({}, 'Password changed'))
+			} else {
+				reply.code(400).send(fail('Invalid password'))
+			}
+		}
+	)
 }

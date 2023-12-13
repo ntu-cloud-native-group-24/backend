@@ -78,12 +78,13 @@ export async function getUserByIdOrThrow(id: number) {
 		.selectFrom('users')
 		.innerJoin('user_privileges', 'users.id', 'user_privileges.user_id')
 		.where('id', '=', id)
-		.select(['id', 'name', 'privilege'])
+		.select(['id', 'name', 'email', 'privilege'])
 		.execute()
 	if (!res || res.length === 0) throw new Error('User not found')
 	return {
 		id: res[0].id,
 		name: res[0].name,
+		email: res[0].email,
 		privileges: res.map(r => r.privilege)
 	}
 }
@@ -91,4 +92,31 @@ export async function validateTokenAndGetUser(token: string) {
 	const id = await validateTokenAndGetUserId(token)
 	if (!id) return
 	return await getUserByIdOrThrow(id)
+}
+export async function changePassword(user_id: number, oldPassword: string, newPassword: string) {
+	const userLogin = await db
+		.selectFrom('user_login')
+		.select('password')
+		.where('user_id', '=', user_id)
+		.executeTakeFirst()
+	if (!userLogin) return false
+	if (!(await verify(oldPassword, userLogin.password))) return false
+	await db
+		.updateTable('user_login')
+		.set({
+			password: await hash(newPassword)
+		})
+		.where('user_id', '=', user_id)
+		.execute()
+	return true
+}
+export async function modifyUser({ id, name, email }: { id: number; name: string; email: string }) {
+	// other fields are not supposed to be modified normally
+	const res = await db
+		.updateTable('users')
+		.set({ name, email })
+		.where('id', '=', id)
+		.returningAll()
+		.executeTakeFirstOrThrow()
+	return res
 }
