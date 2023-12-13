@@ -1,12 +1,14 @@
+require('dotenv').config()
 import fastify from 'fastify'
 import { initSwagger } from './swagger'
 import { AddressInfo } from 'net'
 import { initRoutes } from './routes'
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+import { init } from './logger/logger'
 
 export async function createFastify(logger: boolean) {
 	const app = fastify({
-		logger
+		logger: init()
 	}).withTypeProvider<TypeBoxTypeProvider>()
 	await initSwagger(app)
 	await initRoutes(app)
