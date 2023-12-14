@@ -6,7 +6,11 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 
 export async function createFastify(logger: boolean) {
 	const app = fastify({
-		logger
+		logger: logger
+			? {
+					level: 'info'
+			  }
+			: false
 	}).withTypeProvider<TypeBoxTypeProvider>()
 	await initSwagger(app)
 	await initRoutes(app)
