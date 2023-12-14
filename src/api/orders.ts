@@ -9,7 +9,7 @@ import {
 	OrderRef,
 	OrderStateRef
 } from '../schema'
-import { loginRequired } from './auth'
+import { loginRequired } from './user'
 import { storeManagerRequired } from './stores'
 import { OrderState } from '../db/types'
 import { sendOrderNotification } from '../azure/mail'

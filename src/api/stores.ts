@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { success, fail, wrapSuccessOrNotSchema, StoreRef, StoreWithoutIdRef, StoreWithoutIdType } from '../schema'
-import { loginRequired } from './auth'
+import { loginRequired } from './user'
 import { isStoreManager, getAllStores, getStoreById, createStore, modifySrore } from '../models/store'
 
 export async function storeManagerRequired(request: FastifyRequest, reply: FastifyReply, done: (err?: Error) => void) {
