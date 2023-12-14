@@ -212,7 +212,7 @@ export default async function init(app: FastifyInstance) {
 					}
 				},
 				description: 'Get orders of a store',
-				tags: ['store'],
+				tags: ['store', 'order'],
 				summary: 'Get orders of a store',
 				response: {
 					200: {

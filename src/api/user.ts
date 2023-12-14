@@ -261,7 +261,7 @@ export default async function init(app: FastifyInstance) {
 			preHandler: loginRequired,
 			schema: {
 				description: 'Get orders of current user',
-				tags: ['auth', 'user'],
+				tags: ['auth', 'user', 'order'],
 				summary: 'Get orders of current user',
 				response: {
 					200: wrapSuccessOrNotSchema({
