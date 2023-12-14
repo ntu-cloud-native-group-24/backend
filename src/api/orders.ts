@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { createOrder, checkedGetOrder, updateOrderStateOrThrow } from '../models/orders'
+import { createOrder, checkedGetOrderWithDetails, updateOrderStateOrThrow } from '../models/orders'
 import {
 	success,
 	fail,
@@ -120,7 +120,7 @@ export default async function init(app: FastifyInstance) {
 		},
 		async (req, reply) => {
 			const { order_id } = req.params
-			const order = await checkedGetOrder(req.user.id, order_id)
+			const order = await checkedGetOrderWithDetails(req.user.id, order_id)
 			if (!order) {
 				return reply.code(404).send(fail('Order not found'))
 			}
@@ -173,7 +173,7 @@ export default async function init(app: FastifyInstance) {
 		},
 		async (req, reply) => {
 			const { order_id } = req.params
-			const order = await checkedGetOrder(req.user.id, order_id)
+			const order = await checkedGetOrderWithDetails(req.user.id, order_id)
 			if (!order) {
 				return reply.code(404).send(fail('Order not found'))
 			}

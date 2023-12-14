@@ -1,7 +1,14 @@
 import { expect, test, describe, beforeAll, jest } from '@jest/globals'
 import { createUserOfPrivilegeAndReturnUID, createDummyStore } from '../utils/testutils'
 import { createMeal } from './meals'
-import { createOrder, getOrder, checkedGetOrder, updateOrderStateOrThrow } from './orders'
+import {
+	createOrder,
+	getOrderWithDetails,
+	checkedGetOrderWithDetails,
+	getOrdersByUser,
+	getOrdersByStore,
+	updateOrderStateOrThrow
+} from './orders'
 import { getSelectionGroupsWithData } from './customizations'
 import { UICustomizationsType } from '../schema/customizations'
 
@@ -13,7 +20,7 @@ let store2: Awaited<ReturnType<typeof createDummyStore>>
 let user_id2: Awaited<ReturnType<typeof createUserOfPrivilegeAndReturnUID>>
 let meal_store2: Awaited<ReturnType<typeof createMeal>>
 
-let orderObj: Awaited<ReturnType<typeof getOrder>>
+let orderObj: Awaited<ReturnType<typeof getOrderWithDetails>>
 
 const mealData = {
 	name: '牛肉麵',
@@ -67,7 +74,7 @@ test('create order', async () => {
 		]
 	})
 	expect(order_id).toEqual(expect.any(Number))
-	const order = (await getOrder(order_id))!
+	const order = (await getOrderWithDetails(order_id))!
 	expect(order).toMatchObject({
 		id: order_id,
 		user_id,
@@ -176,19 +183,31 @@ test('create order with empty order', async () => {
 	).rejects.toThrow()
 })
 test('get non existent order', async () => {
-	expect(await getOrder(-1)).toBeUndefined()
+	expect(await getOrderWithDetails(-1)).toBeUndefined()
 })
 test('checked get order for original user', async () => {
-	expect(await checkedGetOrder(user_id, orderObj!.id)).toEqual(orderObj)
+	expect(await checkedGetOrderWithDetails(user_id, orderObj!.id)).toEqual(orderObj)
 })
 test('checked get order for store owner', async () => {
-	expect(await checkedGetOrder(store.owner_id, orderObj!.id)).toEqual(orderObj)
+	expect(await checkedGetOrderWithDetails(store.owner_id, orderObj!.id)).toEqual(orderObj)
 })
 test('checked get order for other user', async () => {
-	expect(await checkedGetOrder(user_id2, orderObj!.id)).toBeUndefined()
+	expect(await checkedGetOrderWithDetails(user_id2, orderObj!.id)).toBeUndefined()
 })
 test('checked get order for another store owner', async () => {
-	expect(await checkedGetOrder(store2.owner_id, orderObj!.id)).toBeUndefined()
+	expect(await checkedGetOrderWithDetails(store2.owner_id, orderObj!.id)).toBeUndefined()
+})
+test('get orders by user', async () => {
+	const tmp = { ...orderObj }
+	delete tmp.details
+	delete tmp.total_price
+	expect(await getOrdersByUser(user_id)).toEqual([tmp])
+})
+test('get orders by store', async () => {
+	const tmp = { ...orderObj }
+	delete tmp.details
+	delete tmp.total_price
+	expect(await getOrdersByStore(store.id)).toEqual([tmp])
 })
 test("user can't update order state to preparing", async () => {
 	await expect(updateOrderStateOrThrow(user_id, orderObj!.id, 'preparing')).rejects.toThrow()
@@ -198,5 +217,5 @@ test("update order state can't go to invalid state", async () => {
 })
 test('update order state: pending -> prepairing', async () => {
 	await updateOrderStateOrThrow(store.owner_id, orderObj!.id, 'preparing')
-	expect((await getOrder(orderObj!.id))!.state).toBe('preparing')
+	expect((await getOrderWithDetails(orderObj!.id))!.state).toBe('preparing')
 })

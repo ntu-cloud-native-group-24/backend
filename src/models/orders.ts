@@ -54,7 +54,7 @@ export async function createOrder(user_id: number, store_id: number, order: Orde
 	return orderId
 }
 
-export async function getOrder(order_id: number) {
+export async function getOrderWithDetails(order_id: number) {
 	const order = await db.selectFrom('orders').where('id', '=', order_id).selectAll().executeTakeFirst()
 	if (!order) return
 	const details = await db.selectFrom('order_details').where('order_id', '=', order_id).selectAll().execute()
@@ -66,9 +66,9 @@ export async function getOrder(order_id: number) {
 	}
 }
 
-export async function checkedGetOrder(user_id: number, order_id: number) {
+export async function checkedGetOrderWithDetails(user_id: number, order_id: number) {
 	// only the user who created the order or the store owner can access the order
-	const order = await getOrder(order_id)
+	const order = await getOrderWithDetails(order_id)
 	if (!order) return
 	if (order.user_id === user_id) return order
 	const store = await db
@@ -78,6 +78,26 @@ export async function checkedGetOrder(user_id: number, order_id: number) {
 		.selectAll()
 		.executeTakeFirst()
 	if (store) return order
+}
+
+export async function getOrdersByUser(user_id: number) {
+	const orders = await db
+		.selectFrom('orders')
+		.where('user_id', '=', user_id)
+		.orderBy('created_at', 'desc')
+		.selectAll()
+		.execute()
+	return orders
+}
+
+export async function getOrdersByStore(store_id: number) {
+	const orders = await db
+		.selectFrom('orders')
+		.where('store_id', '=', store_id)
+		.orderBy('created_at', 'desc')
+		.selectAll()
+		.execute()
+	return orders
 }
 
 type OrderStateTransitionTable = Record<OrderState, OrderState[]>

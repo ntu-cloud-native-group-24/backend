@@ -2,7 +2,7 @@ import '../app-test-setup'
 import { expect, test, describe, beforeAll, jest } from '@jest/globals'
 import { createUserOfPrivilegeAndReturnUID, createDummyStore, getTokenByUserId } from '../utils/testutils'
 import { createMeal } from '../models/meals'
-import { getOrder } from '../models/orders'
+import { getOrderWithDetails } from '../models/orders'
 import { getSelectionGroupsWithData } from '../models/customizations'
 import { UICustomizationsType } from '../schema/customizations'
 
@@ -16,7 +16,7 @@ let user_id2: Awaited<ReturnType<typeof createUserOfPrivilegeAndReturnUID>>
 let user_token2: string
 let meal_store2: Awaited<ReturnType<typeof createMeal>>
 
-let orderObj: Awaited<ReturnType<typeof getOrder>>
+let orderObj: Awaited<ReturnType<typeof getOrderWithDetails>>
 
 const mealData = {
 	name: '牛肉麵',
