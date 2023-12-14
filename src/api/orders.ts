@@ -6,7 +6,7 @@ import {
 	wrapSuccessOrNotSchema,
 	OrderRequestType,
 	OrderRequestRef,
-	OrderRef,
+	OrderWithDetailsRef,
 	OrderStateRef
 } from '../schema'
 import { loginRequired } from './user'
@@ -102,7 +102,7 @@ export default async function init(app: FastifyInstance) {
 						description: 'Successful response',
 						type: 'object',
 						properties: wrapSuccessOrNotSchema({
-							order: OrderRef
+							order: OrderWithDetailsRef
 						})
 					},
 					404: {

@@ -45,7 +45,7 @@ export const OrderStateDef = Type.StringLiteralUnion(['pending', 'preparing', 'd
 export const OrderStateRef = Type.Ref(OrderStateDef)
 export type OrderStateType = Static<typeof OrderStateDef>
 
-export const OrderWithDetailsDef = Type.Object(
+export const OrderDef = Type.Object(
 	{
 		id: Type.Number(),
 		user_id: Type.Number(),
@@ -54,11 +54,22 @@ export const OrderWithDetailsDef = Type.Object(
 		payment_type: Type.StringLiteralUnion(['cash', 'credit_card', 'monthly']),
 		delivery_method: Type.StringLiteralUnion(['delivery', 'pickup']),
 		state: OrderStateRef,
-		created_at: Type.String({ format: 'date-time' }),
-		total_price: Type.Number(),
-		details: Type.Array(OrderDetailDef)
+		created_at: Type.String({ format: 'date-time' })
 	},
+	{ $id: 'Order' }
+)
+export const OrderRef = Type.Ref(OrderDef)
+export type OrderType = Static<typeof OrderDef>
+
+export const OrderWithDetailsDef = Type.Intersect(
+	[
+		OrderDef,
+		Type.Object({
+			total_price: Type.Number(),
+			details: Type.Array(OrderDetailDef)
+		})
+	],
 	{ $id: 'OrderWithDetails' }
 )
-export const OrderRef = Type.Ref(OrderWithDetailsDef)
-export type OrderType = Static<typeof OrderWithDetailsDef>
+export const OrderWithDetailsRef = Type.Ref(OrderWithDetailsDef)
+export type OrderWithDetailsType = Static<typeof OrderWithDetailsDef>

@@ -7,12 +7,14 @@ import {
 	RegisterUserType,
 	LoginUserRef,
 	LoginUserType,
-	UserDef,
+	UserRef,
 	UserType,
 	PrivilegeTypeRef,
-	PrivilegeType
+	PrivilegeType,
+	OrderRef
 } from '../schema'
 import * as User from '../models/user'
+import { getOrdersByUser } from '../models/orders'
 
 declare module 'fastify' {
 	interface FastifyRequest {
@@ -155,7 +157,7 @@ export default async function init(app: FastifyInstance) {
 				summary: 'Get current user',
 				response: {
 					200: wrapSuccessOrNotSchema({
-						user: UserDef
+						user: UserRef
 					})
 				},
 				security: [
@@ -251,6 +253,38 @@ export default async function init(app: FastifyInstance) {
 			} else {
 				reply.code(400).send(fail('Invalid password'))
 			}
+		}
+	)
+	app.get(
+		'/me/orders',
+		{
+			preHandler: loginRequired,
+			schema: {
+				description: 'Get orders of current user',
+				tags: ['auth', 'user'],
+				summary: 'Get orders of current user',
+				response: {
+					200: wrapSuccessOrNotSchema({
+						orders: {
+							type: 'array',
+							items: OrderRef
+						}
+					})
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
+			}
+		},
+		async (req, reply) => {
+			const orders = await getOrdersByUser(req.user.id)
+			reply.send(
+				success({
+					orders
+				})
+			)
 		}
 	)
 }
