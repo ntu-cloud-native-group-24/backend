@@ -1,7 +1,16 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { success, fail, wrapSuccessOrNotSchema, StoreRef, StoreWithoutIdRef, StoreWithoutIdType } from '../schema'
+import {
+	success,
+	fail,
+	wrapSuccessOrNotSchema,
+	StoreRef,
+	StoreWithoutIdRef,
+	StoreWithoutIdType,
+	OrderRef
+} from '../schema'
 import { loginRequired } from './user'
 import { isStoreManager, getAllStores, getStoreById, createStore, modifySrore } from '../models/store'
+import { getOrdersByStore } from '../models/orders'
 
 export async function storeManagerRequired(request: FastifyRequest, reply: FastifyReply, done: (err?: Error) => void) {
 	loginRequired(request, reply, done)
@@ -187,6 +196,61 @@ export default async function init(app: FastifyInstance) {
 			} else {
 				reply.code(400).send(fail('Unable to modify store'))
 			}
+		}
+	)
+	app.get<{
+		Params: { id: number }
+	}>(
+		'/store/:id/orders',
+		{
+			preHandler: storeManagerRequired,
+			schema: {
+				params: {
+					type: 'object',
+					properties: {
+						id: { type: 'number' }
+					}
+				},
+				description: 'Get orders of a store',
+				tags: ['store'],
+				summary: 'Get orders of a store',
+				response: {
+					200: {
+						description: 'Successful response',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({
+							orders: { type: 'array', items: OrderRef }
+						})
+					},
+					400: {
+						description: 'Bad request',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					},
+					404: {
+						description: 'Not found',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					}
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
+			}
+		},
+		async (req, reply) => {
+			const { id } = req.params
+			const store = await getStoreById(id)
+			if (!store) {
+				return reply.code(404).send(fail('Store not found'))
+			}
+			if (store.owner_id !== req.user.id) {
+				return reply.code(400).send(fail('You are not the owner of this store'))
+			}
+			const orders = await getOrdersByStore(id)
+			reply.send(success({ orders }))
 		}
 	)
 }

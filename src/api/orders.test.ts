@@ -315,6 +315,23 @@ test('get orders owned by user', async () => {
 		orders: [tmp]
 	})
 })
+test('get orders owned by store', async () => {
+	const tmp = { ...orderObj }
+	delete tmp.details
+	delete tmp.total_price
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/${store.id}/orders`,
+		headers: {
+			'X-API-KEY': await getTokenByUserId(store.owner_id)
+		}
+	})
+	expect(response.statusCode).toBe(200)
+	expect(response.json()).toMatchObject({
+		success: true,
+		orders: [tmp]
+	})
+})
 test('update order state', async () => {
 	const response = await app.inject({
 		method: 'PATCH',
