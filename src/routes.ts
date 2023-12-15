@@ -6,6 +6,9 @@ export async function initRoutes(app: FastifyInstance) {
 		reply.header('Access-Control-Allow-Origin', '*')
 		reply.header('Access-Control-Allow-Headers', '*')
 		reply.header('Access-Control-Allow-Methods', '*')
+		if (request.method === 'OPTIONS') {
+			reply.send()
+		}
 	})
 	app.register(initApi, { prefix: '/api' })
 }
