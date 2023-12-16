@@ -57,8 +57,12 @@ export async function modifySrore(obj: {
 		.executeTakeFirstOrThrow()
 	return res
 }
-export async function getAllStores() {
-	return await db.selectFrom('stores').selectAll().execute()
+export async function getAllStores({ user_id }: { user_id?: number } = {}) {
+	let query = db.selectFrom('stores').selectAll()
+	if (user_id) {
+		query = query.where('owner_id', '=', user_id)
+	}
+	return await query.execute()
 }
 export async function getStoreById(id: number) {
 	return await db.selectFrom('stores').selectAll().where('id', '=', id).executeTakeFirst()

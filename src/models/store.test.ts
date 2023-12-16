@@ -45,6 +45,13 @@ test('Create store', async () => {
 		...storeInfo
 	})
 })
+test('Get store owned by user', async () => {
+	expect(await getAllStores({ user_id: store_manager })).toContainEqual({
+		id: store.id,
+		owner_id: store_manager,
+		...storeInfo
+	})
+})
 test('Modify store', async () => {
 	expect(
 		await modifySrore({

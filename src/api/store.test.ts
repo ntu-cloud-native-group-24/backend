@@ -81,6 +81,25 @@ test('Get stores', async () => {
 		])
 	)
 })
+test('Get stores owned by user', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/me/stores`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(200)
+	expect(response.json()).toMatchObject({ success: true, stores: expect.any(Array) })
+	expect(response.json().stores).toEqual(
+		expect.arrayContaining([
+			{
+				id: store.id,
+				...storeInfo
+			}
+		])
+	)
+})
 test("Consumer can't create store", async () => {
 	const response = await app.inject({
 		method: 'POST',

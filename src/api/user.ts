@@ -11,10 +11,12 @@ import {
 	UserType,
 	PrivilegeTypeRef,
 	PrivilegeType,
-	OrderRef
+	OrderRef,
+	StoreRef
 } from '../schema'
 import * as User from '../models/user'
 import { getOrdersByUser } from '../models/orders'
+import { getAllStores } from '../models/store'
 
 declare module 'fastify' {
 	interface FastifyRequest {
@@ -283,6 +285,38 @@ export default async function init(app: FastifyInstance) {
 			reply.send(
 				success({
 					orders
+				})
+			)
+		}
+	)
+	app.get(
+		'/me/stores',
+		{
+			preHandler: loginRequired,
+			schema: {
+				description: 'Get stores owned by current user',
+				tags: ['auth', 'user', 'store'],
+				summary: 'Get stores owned by current user',
+				response: {
+					200: wrapSuccessOrNotSchema({
+						stores: {
+							type: 'array',
+							items: StoreRef
+						}
+					})
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
+			}
+		},
+		async (req, reply) => {
+			const stores = await getAllStores({ user_id: req.user.id })
+			reply.send(
+				success({
+					stores
 				})
 			)
 		}
