@@ -83,7 +83,7 @@ test('create order', async () => {
 		payment_type: 'cash',
 		delivery_method: 'pickup',
 		state: 'pending',
-		total_price: 260,
+		calculated_total_price: 260,
 		details: [
 			{
 				id: expect.any(Number),
@@ -200,20 +200,18 @@ test('checked get order for another store owner', async () => {
 test('get orders by user', async () => {
 	const tmp = { ...orderObj }
 	delete tmp.details
-	delete tmp.total_price
 	expect(await getOrdersByUser(user_id)).toEqual([tmp])
 })
 test('get orders by store', async () => {
 	const tmp = { ...orderObj }
 	delete tmp.details
-	delete tmp.total_price
 	expect(await getOrdersByStore(store.id)).toEqual([tmp])
 })
 test("user can't update order state to preparing", async () => {
 	await expect(updateOrderStateOrThrow(user_id, orderObj!.id, 'preparing')).rejects.toThrow()
 })
 test("update order state can't go to invalid state", async () => {
-	await expect(updateOrderStateOrThrow(store.owner_id, orderObj!.id, 'done')).rejects.toThrow()
+	await expect(updateOrderStateOrThrow(store.owner_id, orderObj!.id, 'completed')).rejects.toThrow()
 })
 test('update order state: pending -> prepairing', async () => {
 	await updateOrderStateOrThrow(store.owner_id, orderObj!.id, 'preparing')

@@ -101,7 +101,7 @@ test('create order', async () => {
 			payment_type: 'cash',
 			delivery_method: 'pickup',
 			state: 'pending',
-			total_price: 260,
+			calculated_total_price: 260,
 			details: [
 				{
 					id: expect.any(Number),
@@ -301,7 +301,6 @@ test('get order for another store owner', async () => {
 test('get orders owned by user', async () => {
 	const tmp = { ...orderObj }
 	delete tmp.details
-	delete tmp.total_price
 	const response = await app.inject({
 		method: 'GET',
 		url: `/api/me/orders`,
@@ -318,7 +317,6 @@ test('get orders owned by user', async () => {
 test('get orders owned by store', async () => {
 	const tmp = { ...orderObj }
 	delete tmp.details
-	delete tmp.total_price
 	const response = await app.inject({
 		method: 'GET',
 		url: `/api/store/${store.id}/orders`,

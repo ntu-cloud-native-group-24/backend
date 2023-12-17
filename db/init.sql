@@ -4,7 +4,7 @@ CREATE TYPE "privilege_type" AS ENUM ('consumer', 'store_manager');
 
 CREATE TYPE "payment_type" AS ENUM ('cash', 'credit_card', 'monthly');
 
-CREATE TYPE "order_state" AS ENUM ('pending', 'preparing', 'done', 'cancelled');
+CREATE TYPE "order_state" AS ENUM ('pending', 'preparing', 'prepared', 'completed', 'cancelled');
 
 CREATE TYPE "delivery_method" AS ENUM ('delivery', 'pickup');
 
@@ -112,7 +112,8 @@ CREATE TABLE
     "payment_type" payment_type NOT NULL,
     "state" order_state NOT NULL,
     "delivery_method" delivery_method NOT NULL,
-    "created_at" timestamp NOT NULL DEFAULT (now ())
+    "created_at" timestamp NOT NULL DEFAULT (now ()),
+    "calculated_total_price" integer NOT NULL
   );
 
 ALTER TABLE "stores" ADD FOREIGN KEY ("owner_id") REFERENCES "users" ("id");

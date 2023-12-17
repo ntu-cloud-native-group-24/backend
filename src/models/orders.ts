@@ -26,7 +26,8 @@ export async function createOrder(user_id: number, store_id: number, order: Orde
 				notes: order.notes,
 				payment_type: order.payment_type,
 				delivery_method: order.delivery_method,
-				state: 'pending' // we don't have a payment system yet
+				state: 'pending', // we don't have a payment system yet
+				calculated_total_price: -1
 			})
 			.returningAll()
 			.executeTakeFirstOrThrow()
@@ -49,6 +50,14 @@ export async function createOrder(user_id: number, store_id: number, order: Orde
 			calculated_price_per_item: item.price + calculatePriceOfSelectionGroupsWithData(item.selection_groups)
 		}))
 		await tx.insertInto('order_details').values(insertValues).execute()
+		const totalPrice = insertValues.reduce((acc, item) => acc + item.calculated_price_per_item * item.quantity, 0)
+		await tx
+			.updateTable('orders')
+			.set({
+				calculated_total_price: totalPrice
+			})
+			.where('id', '=', orderResp.id)
+			.execute()
 		return orderResp.id
 	})
 	return orderId
@@ -58,11 +67,9 @@ export async function getOrderWithDetails(order_id: number) {
 	const order = await db.selectFrom('orders').where('id', '=', order_id).selectAll().executeTakeFirst()
 	if (!order) return
 	const details = await db.selectFrom('order_details').where('order_id', '=', order_id).selectAll().execute()
-	const total_price = details.reduce((acc, detail) => acc + detail.calculated_price_per_item * detail.quantity, 0)
 	return {
 		...order,
-		details,
-		total_price
+		details
 	}
 }
 
@@ -103,14 +110,16 @@ export async function getOrdersByStore(store_id: number) {
 type OrderStateTransitionTable = Record<OrderState, OrderState[]>
 const VALID_STATE_TRANSITIONS_FOR_STORE_MANAGER: OrderStateTransitionTable = {
 	pending: ['preparing', 'cancelled'],
-	preparing: ['done', 'cancelled'],
-	done: [],
+	preparing: ['prepared', 'cancelled'],
+	prepared: [],
+	completed: [],
 	cancelled: []
 }
 const VALID_STATE_TRANSITIONS_FOR_CONSUMER: OrderStateTransitionTable = {
 	pending: ['cancelled'],
 	preparing: [],
-	done: [],
+	prepared: ['completed'],
+	completed: [],
 	cancelled: []
 }
 const VALID_STATE_TRANSITIONS: Record<PrivilegeType, OrderStateTransitionTable> = {

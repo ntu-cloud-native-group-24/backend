@@ -20,7 +20,7 @@ export type JsonValue = JsonArray | JsonObject | JsonPrimitive
 
 export type LoginType = 'regular' | 'sso'
 
-export type OrderState = 'cancelled' | 'done' | 'pending' | 'preparing'
+export type OrderState = 'cancelled' | 'completed' | 'pending' | 'prepared' | 'preparing'
 
 export type PaymentType = 'cash' | 'credit_card' | 'monthly'
 
@@ -55,6 +55,7 @@ export interface OrderDetails {
 }
 
 export interface Orders {
+	calculated_total_price: number
 	created_at: Generated<Timestamp>
 	delivery_method: DeliveryMethod
 	id: Generated<number>

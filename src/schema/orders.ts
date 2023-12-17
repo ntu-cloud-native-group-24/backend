@@ -54,7 +54,8 @@ export const OrderDef = Type.Object(
 		payment_type: Type.StringLiteralUnion(['cash', 'credit_card', 'monthly']),
 		delivery_method: Type.StringLiteralUnion(['delivery', 'pickup']),
 		state: OrderStateRef,
-		created_at: Type.String({ format: 'date-time' })
+		created_at: Type.String({ format: 'date-time' }),
+		calculated_total_price: Type.Number()
 	},
 	{ $id: 'Order' }
 )
@@ -65,7 +66,6 @@ export const OrderWithDetailsDef = Type.Intersect(
 	[
 		OrderDef,
 		Type.Object({
-			total_price: Type.Number(),
 			details: Type.Array(OrderDetailDef)
 		})
 	],
