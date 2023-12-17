@@ -110,6 +110,7 @@ export default async function init(app: FastifyInstance) {
 				reply.code(400).send(fail('User creation failed'))
 				return
 			}
+			req.log.info(`User ${name} successfully created`)
 			reply.send(success({}, 'User created'))
 		}
 	)
@@ -145,6 +146,7 @@ export default async function init(app: FastifyInstance) {
 				reply.code(400).send(fail('Invalid user or password'))
 				return
 			}
+			req.log.info(`User ${username} successfully login`)
 			reply.send(success({ token }, 'Login successful'))
 		}
 	)
@@ -214,6 +216,7 @@ export default async function init(app: FastifyInstance) {
 				name,
 				email
 			})
+			req.log.info(`User ${name} successfully modified`)
 			reply.send(success({}, 'User modified'))
 		}
 	)
@@ -251,6 +254,7 @@ export default async function init(app: FastifyInstance) {
 		async (req, reply) => {
 			const good = await User.changePassword(req.user.id, req.body.password_old, req.body.password)
 			if (good) {
+				req.log.info(`User ${req.user.id} successfully changed password`)
 				reply.send(success({}, 'Password changed'))
 			} else {
 				reply.code(400).send(fail('Invalid password'))

@@ -135,6 +135,7 @@ export default async function init(app: FastifyInstance) {
 				return reply.code(404).send(fail('Store not found'))
 			}
 			const meal = await createMeal({ ...req.body, store_id })
+			req.log.info(`Store ${store_id} successfully added meal ${meal.id}`)
 			reply.send(success({ meal }))
 		}
 	)
@@ -181,6 +182,7 @@ export default async function init(app: FastifyInstance) {
 				return reply.code(404).send(fail('Meal not found'))
 			}
 			const meal = await modifyMeal(meal_id, req.body)
+			req.log.info(`Store ${store_id} successfully modified meal ${meal_id}`)
 			reply.send(success({ meal }))
 		}
 	)
@@ -223,6 +225,7 @@ export default async function init(app: FastifyInstance) {
 				return reply.code(404).send(fail('Meal not found'))
 			}
 			await deleteMeal(meal_id)
+			req.log.info(`Store ${store_id} successfully deleted meal ${meal_id}`)
 			reply.send(success({}))
 		}
 	)
@@ -318,6 +321,7 @@ export default async function init(app: FastifyInstance) {
 				return reply.code(404).send(fail('Category not found for store'))
 			}
 			if (await addCategoryToMeal(meal_id, category_id)) {
+				req.log.info(`Store ${store_id} meal ${meal_id} successfully add category ${category_id}`)
 				reply.send(success({}))
 			} else {
 				reply.code(400).send(fail('Category already added'))
@@ -366,6 +370,7 @@ export default async function init(app: FastifyInstance) {
 				return reply.code(404).send(fail('Category not found for store'))
 			}
 			if (await removeCategoryFromMeal(meal_id, category_id)) {
+				req.log.info(`Store ${store_id} meal ${meal_id} successfully removed category ${category_id}`)
 				reply.send(success({}))
 			} else {
 				reply.code(400).send(fail('Category not removed'))

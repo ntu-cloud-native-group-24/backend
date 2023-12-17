@@ -85,6 +85,7 @@ export default async function init(app: FastifyInstance) {
 			}
 			const { name } = req.body
 			const category = await createStoreCategory({ store_id, name })
+			req.log.info(`Store ${store_id} successfully added category ${category.id}`)
 			reply.send(success({ category }))
 		}
 	)

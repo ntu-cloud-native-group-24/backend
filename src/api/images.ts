@@ -43,6 +43,7 @@ export default async function init(app: FastifyInstance) {
 			const suffix = IMAGE_MIME_TO_EXTENSION[type]
 			const blobName = (prefix ? `${prefix}-${randomUUID()}` : randomUUID()) + `.${suffix}`
 			const sas = await generateSasUrl(imageUploadsContainer, blobName)
+			req.log.info(`Successfully uploaded image ${sas}`)
 			reply.send(success({ upload: { sas, url: getPublicURL(imageUploadsContainer, blobName) } }))
 		}
 	)

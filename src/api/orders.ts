@@ -72,11 +72,14 @@ export default async function init(app: FastifyInstance) {
 					.catch(e => {
 						req.log.error(`Error sending notification email: ${e.message}`)
 					})
+				req.log.info(`User ${user_id} successfully sent order ${order_id} to store ${store_id}`)
 				reply.send(success({ order_id }))
 			} catch (e) {
 				if (e instanceof Error) {
+					req.log.info(`Error creating order: ${e.message}`)
 					return reply.code(400).send(fail(e.message))
 				}
+				req.log.info(`Error creating order: ${e}`)
 				throw e
 			}
 		}
@@ -179,6 +182,7 @@ export default async function init(app: FastifyInstance) {
 			}
 			const { state } = req.body
 			await updateOrderStateOrThrow(req.user.id, order_id, state)
+			req.log.info(`User ${req.user.id} successfully updated order ${order_id}`)
 			reply.send(success({}))
 		}
 	)

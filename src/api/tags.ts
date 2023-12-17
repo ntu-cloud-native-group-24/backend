@@ -130,6 +130,7 @@ export default async function init(app: FastifyInstance) {
 			const { tag_id } = req.body
 			const res = await addTagToStore(id, tag_id)
 			if (res) {
+				req.log.info(`Store ${id} successfully added tag ${tag_id}`)
 				reply.send(success({}))
 			} else {
 				reply.code(400).send(fail('Unable to add tag to store'))
@@ -188,6 +189,7 @@ export default async function init(app: FastifyInstance) {
 			}
 			const res = await removeTagFromStore(id, tag_id)
 			if (res) {
+				req.log.info(`Store ${id} successfully removed tag ${tag_id}`)
 				reply.send(success({}))
 			} else {
 				reply.code(400).send(fail('Unable to remove tag from store'))

@@ -112,6 +112,7 @@ export default async function init(app: FastifyInstance) {
 				close_time
 			})
 			if (hours) {
+				req.log.info(`Store ${id} successfully added opening hours ${open_time}~${close_time}`)
 				reply.send(success({ hours }))
 			} else {
 				reply.code(400).send(fail('Unable to add opening hours'))
@@ -170,6 +171,7 @@ export default async function init(app: FastifyInstance) {
 			}
 			const good = await deleteOpeningHours(hour_id)
 			if (good) {
+				req.log.info(`Store ${id} successfully deleted opening hours ${hour_id}`)
 				reply.send(success({}))
 			} else {
 				reply.code(400).send(fail('Unable to delete opening hours'))
