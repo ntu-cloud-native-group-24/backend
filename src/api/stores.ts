@@ -121,6 +121,7 @@ export default async function init(app: FastifyInstance) {
 				email
 			})
 			if (store) {
+				req.log.info(`Successfully created store ${store.id}`)
 				reply.send(success({ store }))
 			} else {
 				reply.code(400).send(fail('Unable to create store'))
@@ -192,6 +193,7 @@ export default async function init(app: FastifyInstance) {
 				email
 			})
 			if (newStore) {
+				req.log.info(`Successfully modified store ${store.id}`)
 				reply.send(success({ store: newStore }))
 			} else {
 				reply.code(400).send(fail('Unable to modify store'))
