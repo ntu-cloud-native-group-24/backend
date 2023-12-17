@@ -135,7 +135,7 @@ export default async function init(app: FastifyInstance) {
 	}>(
 		'/orders/:order_id',
 		{
-			preHandler: storeManagerRequired,
+			preHandler: loginRequired,
 			schema: {
 				description: 'Update an order',
 				tags: ['order'],
