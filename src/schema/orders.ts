@@ -39,7 +39,7 @@ export const OrderDetailDef = Type.Object(
 	{ $id: 'OrderDetail' }
 )
 
-export const OrderStateDef = Type.StringLiteralUnion(['pending', 'preparing', 'prepared', 'completed', 'cancelled'], {
+export const OrderStateDef = Type.StringLiteralUnion(['pending', 'preparing', 'done', 'cancelled'], {
 	$id: 'OrderState'
 })
 export const OrderStateRef = Type.Ref(OrderStateDef)
