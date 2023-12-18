@@ -10,7 +10,7 @@ import {
 } from '../schema'
 import { loginRequired } from './user'
 import { isStoreManager, getAllStores, getStoreById, createStore, modifySrore } from '../models/store'
-import { getOrdersByStore } from '../models/orders'
+import { getCompletedOrdersByStoreAndTime, getOrdersByStore } from '../models/orders'
 
 export async function storeManagerRequired(request: FastifyRequest, reply: FastifyReply, done: (err?: Error) => void) {
 	loginRequired(request, reply, done)
@@ -253,6 +253,80 @@ export default async function init(app: FastifyInstance) {
 			}
 			const orders = await getOrdersByStore(id)
 			reply.send(success({ orders }))
+		}
+	)
+	app.get<{
+		Params: { id: number }
+	}>(
+		'/store/:id/orders/monthly',
+		{
+			preHandler: storeManagerRequired,
+			schema: {
+				params: {
+					type: 'object',
+					properties: {
+						id: { type: 'number' }
+					}
+				},
+				description: 'Get orders in the last 12 month group by monthly of a store',
+				tags: ['store', 'order'],
+				summary: 'Get orders of a store',
+				response: {
+					200: {
+						description: 'Successful response',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({
+							result: {
+								type: 'array',
+								month_orders: {
+									month: { type: 'string' },
+									orders: { type: 'array', items: OrderRef }
+								}
+							}
+						})
+					},
+					400: {
+						description: 'Bad request',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					},
+					404: {
+						description: 'Not found',
+						type: 'object',
+						properties: wrapSuccessOrNotSchema({})
+					}
+				},
+				security: [
+					{
+						apiKey: []
+					}
+				]
+			}
+		},
+		async (req, reply) => {
+			const { id } = req.params
+			const store = await getStoreById(id)
+			if (!store) {
+				return reply.code(404).send(fail('Store not found'))
+			}
+			if (store.owner_id !== req.user.id) {
+				return reply.code(400).send(fail('You are not the owner of this store'))
+			}
+			let orders = []
+			const now = new Date()
+			let month_begin = new Date(now.getFullYear(), now.getMonth())
+			let month_end = new Date(now.getFullYear(), Number(now.getMonth()) + 1)
+			const last_month_number = 12
+			for (let i = 0; i < last_month_number; i++) {
+				const tmp = await getCompletedOrdersByStoreAndTime(id, month_begin, month_end)
+				orders.push({
+					month: `${month_begin.getFullYear()}-${Number(month_begin.getMonth()) + 1}`,
+					orders: tmp
+				})
+				month_begin.setMonth(month_begin.getMonth() - 1)
+				month_end.setMonth(month_end.getMonth() - 1)
+			}
+			reply.send(success({ result: orders }))
 		}
 	)
 }
