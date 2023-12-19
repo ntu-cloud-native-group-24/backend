@@ -61,6 +61,23 @@ test('Creating meals', async () => {
 	})
 	mealResp = response.json().meal
 })
+
+test('Creating meals to non-exist store', async () => {
+	const response = await app.inject({
+		method: 'POST',
+		url: `/api/store/0/meals`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: meal
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
+
 test('Get all meals for store', async () => {
 	const response = await app.inject({
 		method: 'GET',
@@ -72,6 +89,19 @@ test('Get all meals for store', async () => {
 		meals: [mealResp]
 	})
 })
+
+test('Get all meals for non-exist store', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/meals`
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
+
 test('Get meal by id', async () => {
 	const response = await app.inject({
 		method: 'GET',
@@ -83,6 +113,57 @@ test('Get meal by id', async () => {
 		meal: mealResp
 	})
 })
+
+test('Get all meals by id from non-exist store', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/meals/0`
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
+
+test('Modify meal from non-exist store', async () => {
+	const response = await app.inject({
+		method: 'PUT',
+		url: `/api/store/0/meals/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			...mealResp,
+			is_available: true
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
+
+test('Modify not-exist meal', async () => {
+	const response = await app.inject({
+		method: 'PUT',
+		url: `/api/store/${store.id}/meals/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			...mealResp,
+			is_available: true
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Meal not found'
+	})
+})
+
 test('Modify meal', async () => {
 	const response = await app.inject({
 		method: 'PUT',
@@ -137,6 +218,61 @@ test('Add category to meal', async () => {
 		]
 	})
 })
+
+test('Add category to meal to not-exist store', async () => {
+	const response = await app.inject({
+		method: 'POST',
+		url: `/api/store/0/meals/0/categories`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			category_id: 0
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
+
+test('Add category to not-exist meal', async () => {
+	const response = await app.inject({
+		method: 'POST',
+		url: `/api/store/${store.id}/meals/0/categories`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			category_id: 0
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Meal not found'
+	})
+})
+
+test('Add not-exist category to meal', async () => {
+	const response = await app.inject({
+		method: 'POST',
+		url: `/api/store/${store.id}/meals/${mealResp.id}/categories`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			category_id: 0
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Category not found for store'
+	})
+})
+
 test('Get categories of meal', async () => {
 	const response = await app.inject({
 		method: 'GET',
@@ -153,6 +289,77 @@ test('Get categories of meal', async () => {
 		]
 	})
 })
+
+test('Get categories of meal from not-exist store', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/meals/0/categories`
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
+
+test('Get categories of not-exist meal', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/${store.id}/meals/0/categories`
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Meal not found'
+	})
+})
+
+
+test('Remove category to meal to not-exist store', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/0/meals/0/categories/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
+
+test('Remove category to not-exist meal', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/${store.id}/meals/0/categories/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Meal not found'
+	})
+})
+
+test('Remove not-exist category to meal', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/${store.id}/meals/${mealResp.id}/categories/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Category not found for store'
+	})
+})
+
 test('Remove category from meal', async () => {
 	const response = await app.inject({
 		method: 'DELETE',
@@ -175,6 +382,40 @@ test('Remove category from meal', async () => {
 	).toEqual({
 		success: true,
 		categories: []
+	})
+})
+
+test('Delete meal from non-exist store', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/0/meals/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
+
+test('Delete not-exist meal', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/${store.id}/meals/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			...mealResp,
+			is_available: true
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Meal not found'
 	})
 })
 

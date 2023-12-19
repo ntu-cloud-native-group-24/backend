@@ -330,6 +330,38 @@ test('get orders owned by store', async () => {
 		orders: [tmp]
 	})
 })
+test('get orders owned by not-exist store', async () => {
+	const tmp = { ...orderObj }
+	delete tmp.details
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/orders`,
+		headers: {
+			'X-API-KEY': await getTokenByUserId(store.owner_id)
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
+test('get orders owned by store (not store owner)', async () => {
+	const tmp = { ...orderObj }
+	delete tmp.details
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/${store.id}/orders`,
+		headers: {
+			'X-API-KEY': await getTokenByUserId(store2.owner_id)
+		}
+	})
+	expect(response.statusCode).toBe(400)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'You are not the owner of this store'
+	})
+})
 test('update order state as store owner: pending -> preparing', async () => {
 	const response = await app.inject({
 		method: 'PATCH',

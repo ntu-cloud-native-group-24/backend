@@ -30,6 +30,20 @@ test('Get tags', async () => {
 
 const tag_id = 1
 const bad_tag_id = 0
+test('Get tag of a store', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/tags`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
 test('Add tag to store', async () => {
 	const response = await app.inject({
 		method: 'POST',

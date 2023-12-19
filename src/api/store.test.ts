@@ -65,6 +65,16 @@ test('Get store by id', async () => {
 		}
 	})
 })
+test('Get not-exist store by id', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0`
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toMatchObject({
+		success: false
+	})
+})
 test('Get stores', async () => {
 	const response = await app.inject({
 		method: 'GET',
@@ -132,6 +142,24 @@ test('Modify store with PUT', async () => {
 			...storeInfo,
 			...storeInfo2
 		}
+	})
+})
+test('Modify not-exist store with PUT', async () => {
+	const response = await app.inject({
+		method: 'PUT',
+		url: `/api/store/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			...storeInfo,
+			...storeInfo2
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
 	})
 })
 test('Modify store with PUT (incomplete info)', async () => {

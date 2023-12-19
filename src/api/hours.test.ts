@@ -1,14 +1,18 @@
 import '../app-test-setup'
 import { expect, test, describe, beforeAll, jest } from '@jest/globals'
-import { createDummyStore, getTokenByUserId } from '../utils/testutils'
+import { createDummyStore, createUserOfPrivilegeAndReturnUID, getTokenByUserId } from '../utils/testutils'
 
 let store: any
 let storeManager: string
 let openingHoursResp: any
+let storeId2: number
+let storeManager2: string
 
 beforeAll(async () => {
 	store = await createDummyStore()
 	storeManager = await getTokenByUserId(store.owner_id)
+	storeId2 = await createUserOfPrivilegeAndReturnUID('store_manager')
+	storeManager2 = await getTokenByUserId(storeId2)
 })
 
 const openingHours = [
@@ -93,6 +97,21 @@ test('Add opening hours to non-existent store', async () => {
 	expect(response.json()).toMatchObject({
 		success: false,
 		message: 'Store not found'
+	})
+})
+test('Add opening hours (not store owner)', async () => {
+	const response = await app.inject({
+		method: 'POST',
+		url: `/api/store/${store.id}/hours`,
+		headers: {
+			'X-API-KEY': storeManager2
+		},
+		payload: openingHours[0]
+	})
+	expect(response.statusCode).toBe(400)
+	expect(response.json()).toMatchObject({
+		success: false,
+		message: 'You are not the owner of this store'
 	})
 })
 test('Delete opening hours from non-existent store', async () => {
