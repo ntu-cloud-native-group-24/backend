@@ -178,6 +178,151 @@ test('Remove category from meal', async () => {
 	})
 })
 
+test('Get meal of non-existing store', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/meals`
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Get one meal of non-existing store', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/meals/0`
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Get non-existing meal', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/${store.id}/meals/0`
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Post meal to non-existing store', async () => {
+	const response = await app.inject({
+		method: 'POST',
+		url: `/api/store/0/meals`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: meal
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Modify meal of non-existing store', async () => {
+	const response = await app.inject({
+		method: 'PUT',
+		url: `/api/store/0/meals/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: mealResp
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Modify non-existing meal', async () => {
+	const response = await app.inject({
+		method: 'PUT',
+		url: `/api/store/${store.id}/meals/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: mealResp
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Delete meal of non-existing store', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/0/meals/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Delete non-existing meal', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/${store.id}/meals/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Get category to meal of non-existing store', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/meals/0/categories`
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Get category of non-existing meal', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/${store.id}/meals/0/categories`
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Post category to meal of non-existing store', async () => {
+	const response = await app.inject({
+		method: 'POST',
+		url: `/api/store/0/meals/0/categories`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			category_id: category.id
+		}
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Post category to non-existing meal', async () => {
+	const response = await app.inject({
+		method: 'POST',
+		url: `/api/store/${store.id}/meals/0/categories`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			category_id: category.id
+		}
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Delete category from meal of non-existing store', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/0/meals/0/categories/${category.id}`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Delete category from non-existing meal', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/${store.id}/meals/0/categories/${category.id}`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+})
+test('Delete non-existing category from meal', async () => {
+	const response = await app.inject({
+		method: 'DELETE',
+		url: `/api/store/${store.id}/meals/${mealResp.id}/categories/0`,
+		headers: {
+			'X-API-KEY': storeManager
+		}
+	})
+	expect(response.statusCode).toBe(404)
+})
+
 test('Delete meal', async () => {
 	const response = await app.inject({
 		method: 'DELETE',
