@@ -64,7 +64,7 @@ export type OrderType = Static<typeof OrderDef>
 
 export const OrderWithDetailsDef = Type.Intersect(
 	[
-		OrderDef,
+		OrderRef,
 		Type.Object({
 			details: Type.Array(OrderDetailDef)
 		})

@@ -192,7 +192,7 @@ export default async function init(app: FastifyInstance) {
 				description: 'Modify current user',
 				tags: ['auth', 'user'],
 				summary: 'Modify current user',
-				params: {
+				body: {
 					type: 'object',
 					properties: {
 						name: { type: 'string' },
@@ -233,7 +233,7 @@ export default async function init(app: FastifyInstance) {
 				description: 'Change password',
 				tags: ['auth', 'user'],
 				summary: 'Change password',
-				params: {
+				body: {
 					type: 'object',
 					properties: {
 						password: { type: 'string' },
@@ -259,70 +259,6 @@ export default async function init(app: FastifyInstance) {
 			} else {
 				reply.code(400).send(fail('Invalid password'))
 			}
-		}
-	)
-	app.get(
-		'/me/orders',
-		{
-			preHandler: loginRequired,
-			schema: {
-				description: 'Get orders of current user',
-				tags: ['auth', 'user', 'order'],
-				summary: 'Get orders of current user',
-				response: {
-					200: wrapSuccessOrNotSchema({
-						orders: {
-							type: 'array',
-							items: OrderRef
-						}
-					})
-				},
-				security: [
-					{
-						apiKey: []
-					}
-				]
-			}
-		},
-		async (req, reply) => {
-			const orders = await getOrdersByUser(req.user.id)
-			reply.send(
-				success({
-					orders
-				})
-			)
-		}
-	)
-	app.get(
-		'/me/stores',
-		{
-			preHandler: loginRequired,
-			schema: {
-				description: 'Get stores owned by current user',
-				tags: ['auth', 'user', 'store'],
-				summary: 'Get stores owned by current user',
-				response: {
-					200: wrapSuccessOrNotSchema({
-						stores: {
-							type: 'array',
-							items: StoreRef
-						}
-					})
-				},
-				security: [
-					{
-						apiKey: []
-					}
-				]
-			}
-		},
-		async (req, reply) => {
-			const stores = await getAllStores({ user_id: req.user.id })
-			reply.send(
-				success({
-					stores
-				})
-			)
 		}
 	)
 }
