@@ -232,7 +232,7 @@ test('get orders by store and time', async () => {
 	tmp.state = 'completed'
 	const time = tmp.created_at
 	const now = new Date()
-	const month_begin = new Date(time?.getFullYear()||now.getFullYear(),time?.getMonth()||now.getMonth())
-	const month_end = new Date(month_begin.getFullYear(),Number(month_begin.getMonth())+1)
-	expect(await getCompletedOrdersByStoreAndTime(store.id,month_begin,month_end)).toContainEqual(tmp)
+	const month_begin = new Date(time?.getFullYear() || now.getFullYear(), time?.getMonth() || now.getMonth())
+	const month_end = new Date(month_begin.getFullYear(), Number(month_begin.getMonth()) + 1)
+	expect(await getCompletedOrdersByStoreAndTime(store.id, month_begin, month_end)).toContainEqual(tmp)
 })
