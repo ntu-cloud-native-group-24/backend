@@ -64,3 +64,53 @@ test('Getting specific category', async () => {
 		}
 	})
 })
+test('Get category of non-existing store', async () => {
+	const resp = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/category`
+	})
+	expect(resp.statusCode).toBe(404)
+	expect(resp.json()).toMatchObject({
+		success: false,
+		message: 'Store not found'
+	})
+})
+test('Get one category of non-existing store', async () => {
+	const resp = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/category/0`
+	})
+	expect(resp.statusCode).toBe(404)
+	expect(resp.json()).toMatchObject({
+		success: false,
+		message: 'Store not found'
+	})
+})
+test('Post category to non-existing store', async () => {
+	const resp = await app.inject({
+		method: 'POST',
+		url: `/api/store/0/category`,
+		headers: {
+			'X-API-KEY': storeManager
+		},
+		payload: {
+			name: category
+		}
+	})
+	expect(resp.statusCode).toBe(404)
+	expect(resp.json()).toMatchObject({
+		success: false,
+		message: 'Store not found'
+	})
+})
+test('Get non-existing category', async () => {
+	const resp = await app.inject({
+		method: 'GET',
+		url: `/api/store/${store.id}/category/0`
+	})
+	expect(resp.statusCode).toBe(404)
+	expect(resp.json()).toMatchObject({
+		success: false,
+		message: 'Category not found'
+	})
+})

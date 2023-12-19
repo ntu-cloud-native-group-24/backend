@@ -120,7 +120,7 @@ export default async function init(app: FastifyInstance) {
 			}
 			const category = await getStoreCategoryByStoreAndId(store_id, category_id)
 			if (!category) {
-				return reply.code(404).send(fail('ID not found'))
+				return reply.code(404).send(fail('Category not found'))
 			}
 			reply.send(success({ category: category }))
 		}

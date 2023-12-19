@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { EmailClient, KnownEmailSendStatus, EmailContent } from '@azure/communication-email'
 import { db } from '../db'
 
@@ -88,7 +89,6 @@ export async function sendOrderNotification(order_id: number) {
 	]
 }
 
-/* istanbul ignore next */
 if (require.main === module) {
 	;(async () => {
 		const recipient = process.argv[2]
