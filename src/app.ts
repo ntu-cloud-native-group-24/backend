@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 import fastify from 'fastify'
 import { initSwagger } from './swagger'
 import { AddressInfo } from 'net'

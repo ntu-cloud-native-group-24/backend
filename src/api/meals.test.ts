@@ -314,7 +314,6 @@ test('Get categories of not-exist meal', async () => {
 	})
 })
 
-
 test('Remove category to meal to not-exist store', async () => {
 	const response = await app.inject({
 		method: 'DELETE',
