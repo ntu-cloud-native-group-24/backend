@@ -6,7 +6,8 @@ import {
 	StoreRef,
 	StoreWithoutIdRef,
 	StoreWithoutIdType,
-	OrderRef
+	OrderRef,
+	MonthlyOrderStatsRef
 } from '../schema'
 import { loginRequired } from './user'
 import { isStoreManager, getAllStores, getStoreById, createStore, modifySrore } from '../models/store'
@@ -270,18 +271,15 @@ export default async function init(app: FastifyInstance) {
 				},
 				description: 'Get orders in the last 12 month group by monthly of a store',
 				tags: ['store', 'order'],
-				summary: 'Get orders of a store',
+				summary: 'Get monthly orders of a store',
 				response: {
 					200: {
 						description: 'Successful response',
 						type: 'object',
 						properties: wrapSuccessOrNotSchema({
-							result: {
+							results: {
 								type: 'array',
-								month_orders: {
-									month: { type: 'string' },
-									orders: { type: 'array', items: OrderRef }
-								}
+								items: MonthlyOrderStatsRef
 							}
 						})
 					},
@@ -312,21 +310,21 @@ export default async function init(app: FastifyInstance) {
 			if (store.owner_id !== req.user.id) {
 				return reply.code(400).send(fail('You are not the owner of this store'))
 			}
-			let orders = []
+			let results = []
 			const now = new Date()
 			let month_begin = new Date(now.getFullYear(), now.getMonth())
 			let month_end = new Date(now.getFullYear(), Number(now.getMonth()) + 1)
 			const last_month_number = 12
 			for (let i = 0; i < last_month_number; i++) {
 				const tmp = await getCompletedOrdersByStoreAndTime(id, month_begin, month_end)
-				orders.push({
+				results.push({
 					month: `${month_begin.getFullYear()}-${Number(month_begin.getMonth()) + 1}`,
 					orders: tmp
 				})
 				month_begin.setMonth(month_begin.getMonth() - 1)
 				month_end.setMonth(month_end.getMonth() - 1)
 			}
-			reply.send(success({ result: orders }))
+			reply.send(success({ results }))
 		}
 	)
 }

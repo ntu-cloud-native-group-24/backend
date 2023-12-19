@@ -1,4 +1,5 @@
 import { Static, Type } from '../typebox-openapi'
+import { OrderRef } from './orders'
 
 export const StoreDef = Type.Object(
 	{
@@ -21,3 +22,13 @@ export const StoreWithoutIdDef = Type.Omit(StoreDef, ['id'], {
 })
 export const StoreWithoutIdRef = Type.Ref(StoreWithoutIdDef)
 export type StoreWithoutIdType = Static<typeof StoreWithoutIdDef>
+
+export const MonthlyOrderStatsDef = Type.Object(
+	{
+		month: Type.String(),
+		orders: Type.Array(OrderRef)
+	},
+	{ $id: 'MonthlyOrderStats' }
+)
+export const MonthlyOrderStatsRef = Type.Ref(MonthlyOrderStatsDef)
+export type MonthlyOrderStatsType = Static<typeof MonthlyOrderStatsDef>

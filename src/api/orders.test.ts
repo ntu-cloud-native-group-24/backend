@@ -330,7 +330,7 @@ test('get orders owned by store', async () => {
 		orders: [tmp]
 	})
 })
-test('update order state', async () => {
+test('update order state as store owner: pending -> preparing', async () => {
 	const response = await app.inject({
 		method: 'PATCH',
 		url: `/api/orders/${orderObj!.id}`,
@@ -360,4 +360,88 @@ test('update order state', async () => {
 			state: 'preparing'
 		}
 	})
+})
+test('update order state as store owner: preparing -> prepared', async () => {
+	const response = await app.inject({
+		method: 'PATCH',
+		url: `/api/orders/${orderObj!.id}`,
+		headers: {
+			'X-API-KEY': await getTokenByUserId(store.owner_id)
+		},
+		payload: {
+			state: 'prepared'
+		}
+	})
+	expect(response.statusCode).toBe(200)
+	expect(response.json()).toMatchObject({
+		success: true
+	})
+	const response2 = await app.inject({
+		method: 'GET',
+		url: `/api/orders/${orderObj!.id}`,
+		headers: {
+			'X-API-KEY': user_token
+		}
+	})
+	expect(response2.statusCode).toBe(200)
+	expect(response2.json()).toMatchObject({
+		success: true,
+		order: {
+			...orderObj,
+			state: 'prepared'
+		}
+	})
+})
+test('update order state as consumer: prepared -> completed', async () => {
+	const response = await app.inject({
+		method: 'PATCH',
+		url: `/api/orders/${orderObj!.id}`,
+		headers: {
+			'X-API-KEY': user_token
+		},
+		payload: {
+			state: 'completed'
+		}
+	})
+	expect(response.statusCode).toBe(200)
+	expect(response.json()).toMatchObject({
+		success: true
+	})
+	const response2 = await app.inject({
+		method: 'GET',
+		url: `/api/orders/${orderObj!.id}`,
+		headers: {
+			'X-API-KEY': user_token
+		}
+	})
+	expect(response2.statusCode).toBe(200)
+	expect(response2.json()).toMatchObject({
+		success: true,
+		order: {
+			...orderObj,
+			state: 'completed'
+		}
+	})
+})
+
+test('get monthly order stats', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/${store.id}/orders/monthly`,
+		headers: {
+			'X-API-KEY': await getTokenByUserId(store.owner_id)
+		}
+	})
+	expect(response.statusCode).toBe(200)
+	expect(response.json()).toMatchObject({ success: true, results: expect.any(Array) })
+	let tmp: any = orderObj!
+	delete tmp.details
+	expect(response.json().results).toMatchObject(
+		expect.arrayContaining([
+			{
+				month: expect.any(String),
+				orders: expect.any(Array)
+			}
+		])
+	)
 })

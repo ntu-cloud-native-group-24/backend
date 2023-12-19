@@ -32,7 +32,8 @@ import {
 	OrderDef,
 	OrderWithDetailsDef,
 	UploadRequestDef,
-	UploadResponseDef
+	UploadResponseDef,
+	MonthlyOrderStatsDef
 } from './schema'
 
 export async function initSwagger(app: FastifyInstance) {
@@ -67,6 +68,7 @@ export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(OrderWithDetailsDef)
 	app.addSchema(UploadRequestDef)
 	app.addSchema(UploadResponseDef)
+	app.addSchema(MonthlyOrderStatsDef)
 	await app.register(fastifySwagger, {
 		swagger: {
 			info: {
