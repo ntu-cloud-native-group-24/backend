@@ -192,7 +192,7 @@ export default async function init(app: FastifyInstance) {
 				description: 'Modify current user',
 				tags: ['auth', 'user'],
 				summary: 'Modify current user',
-				params: {
+				body: {
 					type: 'object',
 					properties: {
 						name: { type: 'string' },
@@ -233,7 +233,7 @@ export default async function init(app: FastifyInstance) {
 				description: 'Change password',
 				tags: ['auth', 'user'],
 				summary: 'Change password',
-				params: {
+				body: {
 					type: 'object',
 					properties: {
 						password: { type: 'string' },
