@@ -7,7 +7,8 @@ import {
 	checkedGetOrderWithDetails,
 	getOrdersByUser,
 	getOrdersByStore,
-	updateOrderStateOrThrow
+	updateOrderStateOrThrow,
+	getCompletedOrdersByStoreAndTime
 } from './orders'
 import { getSelectionGroupsWithData } from './customizations'
 import { UICustomizationsType } from '../schema/customizations'
@@ -216,4 +217,22 @@ test("update order state can't go to invalid state", async () => {
 test('update order state: pending -> prepairing', async () => {
 	await updateOrderStateOrThrow(store.owner_id, orderObj!.id, 'preparing')
 	expect((await getOrderWithDetails(orderObj!.id))!.state).toBe('preparing')
+})
+test('update order state: prepairing -> prepared', async () => {
+	await updateOrderStateOrThrow(store.owner_id, orderObj!.id, 'prepared')
+	expect((await getOrderWithDetails(orderObj!.id))!.state).toBe('prepared')
+})
+test('update order state: prepared -> completed', async () => {
+	await updateOrderStateOrThrow(user_id, orderObj!.id, 'completed')
+	expect((await getOrderWithDetails(orderObj!.id))!.state).toBe('completed')
+})
+test('get orders by store and time', async () => {
+	let tmp = { ...orderObj }
+	delete tmp.details
+	tmp.state = 'completed'
+	const time = tmp.created_at
+	const now = new Date()
+	const month_begin = new Date(time?.getFullYear()||now.getFullYear(),time?.getMonth()||now.getMonth())
+	const month_end = new Date(month_begin.getFullYear(),Number(month_begin.getMonth())+1)
+	expect(await getCompletedOrdersByStoreAndTime(store.id,month_begin,month_end)).toContainEqual(tmp)
 })

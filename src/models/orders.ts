@@ -107,6 +107,19 @@ export async function getOrdersByStore(store_id: number) {
 	return orders
 }
 
+export async function getCompletedOrdersByStoreAndTime(store_id: number, begin: Date, end: Date) {
+	const orders = await db
+		.selectFrom('orders')
+		.where('store_id', '=', store_id)
+		.where('state', '=', 'completed')
+		.where('created_at', '>=', begin)
+		.where('created_at', '<', end)
+		.orderBy('created_at', 'asc')
+		.selectAll()
+		.execute()
+	return orders
+}
+
 type OrderStateTransitionTable = Record<OrderState, OrderState[]>
 const VALID_STATE_TRANSITIONS_FOR_STORE_MANAGER: OrderStateTransitionTable = {
 	pending: ['preparing', 'cancelled'],
