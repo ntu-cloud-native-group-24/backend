@@ -211,3 +211,11 @@ test('Get me (wrong token)', async () => {
 	expect(response.statusCode).toBe(401)
 	expect(response.json()).toMatchObject({ message: 'Unable to validate token' })
 })
+test('Unauthorized', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: '/api/me'
+	})
+	expect(response.statusCode).toBe(401)
+	expect(response.json()).toMatchObject({ message: 'Unauthorized' })
+})

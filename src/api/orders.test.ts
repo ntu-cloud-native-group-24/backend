@@ -362,6 +362,23 @@ test('get orders owned by store (not store owner)', async () => {
 		message: 'You are not the owner of this store'
 	})
 })
+test('update non existent order', async () => {
+	const response = await app.inject({
+		method: 'PATCH',
+		url: `/api/orders/0`,
+		headers: {
+			'X-API-KEY': await getTokenByUserId(store.owner_id)
+		},
+		payload: {
+			state: 'preparing'
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Order not found'
+	})
+})
 test('update order state as store owner: pending -> preparing', async () => {
 	const response = await app.inject({
 		method: 'PATCH',
@@ -476,4 +493,34 @@ test('get monthly order stats', async () => {
 			}
 		])
 	)
+})
+
+test('get monthly order stats from non existent store', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/0/orders/monthly`,
+		headers: {
+			'X-API-KEY': await getTokenByUserId(store.owner_id)
+		}
+	})
+	expect(response.statusCode).toBe(404)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'Store not found'
+	})
+})
+
+test('get monthly order stats', async () => {
+	const response = await app.inject({
+		method: 'GET',
+		url: `/api/store/${store.id}/orders/monthly`,
+		headers: {
+			'X-API-KEY': await getTokenByUserId(store2.owner_id)
+		}
+	})
+	expect(response.statusCode).toBe(400)
+	expect(response.json()).toEqual({
+		success: false,
+		message: 'You are not the owner of this store'
+	})
 })
