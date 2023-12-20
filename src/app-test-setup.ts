@@ -1,5 +1,8 @@
 import { createFastify, FastifyInstanceType } from './app'
-import { beforeAll, afterAll } from '@jest/globals'
+import { jest, beforeAll, afterAll } from '@jest/globals'
+
+jest.mock('./azure/blob.ts')
+jest.mock('./azure/mail.ts')
 
 declare global {
 	var app: FastifyInstanceType
