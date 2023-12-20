@@ -65,8 +65,8 @@ export async function deleteMeal(id: number) {
 		}
 		// we also need to delete the categories associated with the meal before deleting the meal
 		// because of foreign key constraints
-		await db.deleteFrom('meal_categories_assoc').where('meal_id', '=', id).execute()
-		await db.deleteFrom('meals').where('id', '=', id).executeTakeFirstOrThrow()
+		await tx.deleteFrom('meal_categories_assoc').where('meal_id', '=', id).execute()
+		await tx.deleteFrom('meals').where('id', '=', id).executeTakeFirstOrThrow()
 		return true
 	})
 	return success
