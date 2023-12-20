@@ -8,6 +8,7 @@ import initTags from './tags'
 import initStoreCategories from './store_categories'
 import initOrders from './orders'
 import initImages from './images'
+import initStats from './stats'
 
 export default async function init(app: FastifyInstance) {
 	initAuthMiddleware(app)
@@ -20,4 +21,5 @@ export default async function init(app: FastifyInstance) {
 	initStoreCategories(app)
 	initOrders(app)
 	initImages(app)
+	initStats(app)
 }

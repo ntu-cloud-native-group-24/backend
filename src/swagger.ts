@@ -33,7 +33,9 @@ import {
 	OrderWithDetailsDef,
 	UploadRequestDef,
 	UploadResponseDef,
-	MonthlyOrderStatsDef
+	MonthlyOrderStatsDef,
+	MealSalesCountQueryDef,
+	MealSalesCountDef
 } from './schema'
 
 export async function initSwagger(app: FastifyInstance) {
@@ -69,6 +71,8 @@ export async function initSwagger(app: FastifyInstance) {
 	app.addSchema(UploadRequestDef)
 	app.addSchema(UploadResponseDef)
 	app.addSchema(MonthlyOrderStatsDef)
+	app.addSchema(MealSalesCountQueryDef)
+	app.addSchema(MealSalesCountDef)
 	await app.register(fastifySwagger, {
 		// swagger: {
 		// 	info: {
@@ -116,7 +120,8 @@ export async function initSwagger(app: FastifyInstance) {
 				{ name: 'meal', description: 'Meal related end-points' },
 				{ name: 'tags', description: 'Meal tags related end-points' },
 				{ name: 'order', description: 'Order related end-points' },
-				{ name: 'images', description: 'Image uploading end-points' }
+				{ name: 'images', description: 'Image uploading end-points' },
+				{ name: 'stats', description: 'Statistics end-points' }
 			],
 			components: {
 				securitySchemes: {
